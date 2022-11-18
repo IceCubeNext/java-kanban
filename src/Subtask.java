@@ -1,9 +1,17 @@
 import java.util.Objects;
 
 public class Subtask extends Task {
-    private final int epicsId;
+    private int epicsId;
     Subtask(int id, int epicsId, String name, String description) {
         super(id, name, description);
+        this.epicsId = epicsId;
+    }
+
+    public int getEpicsId() {
+        return epicsId;
+    }
+
+    public void setEpicsId(int epicsId) {
         this.epicsId = epicsId;
     }
 
@@ -12,25 +20,26 @@ public class Subtask extends Task {
         if (obj == this) return true;
         if (obj == null || obj.getClass() != this.getClass()) return false;
         Subtask subtask = (Subtask) obj;
-        return this.id == subtask.id
-                && Objects.equals(this.name, subtask.name)
-                && Objects.equals(this.description, subtask.description)
-                && Objects.equals(this.status, subtask.status)
+        return this.getId() == subtask.getId()
+                && Objects.equals(this.getName(), subtask.getName())
+                && Objects.equals(this.getDescription(), subtask.getDescription())
+                && Objects.equals(this.getStatus(), subtask.getStatus())
                 && this.epicsId == subtask.epicsId;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.id, this.name, this.description, this.status, this.epicsId);
+        return Objects.hash(this.getId(), this.getName(), this.getDescription(),
+                this.getStatus(), this.getEpicsId());
     }
 
     @Override
     public String toString() {
         return "Subtask{" +
-                "id='" + this.id + '\'' +
-                ", name='" + this.name + '\'' +
-                ", description='" + this.description +'\'' +
-                ", status='" + this.status + '\'' +
-                ", epicsId='" + this.epicsId + '}';
+                "id='" + this.getId() + '\'' +
+                ", name='" + this.getName() + '\'' +
+                ", description='" + this.getDescription() +'\'' +
+                ", status='" + this.getStatus() + '\'' +
+                ", epicsId='" + this.getEpicsId() + '}';
     }
 }
