@@ -2,8 +2,13 @@ import java.util.Objects;
 
 public class Subtask extends Task {
     private int epicsId;
-    Subtask(int id, int epicsId, String name, String description) {
-        super(id, name, description);
+    Subtask(int id, int epicsId, String name, String description, Status status) {
+        super(id, name, description, status);
+        this.epicsId = epicsId;
+    }
+
+    Subtask(int epicsId, String name, String description, Status status) {
+        super(name, description, status);
         this.epicsId = epicsId;
     }
 
@@ -40,6 +45,6 @@ public class Subtask extends Task {
                 ", name='" + this.getName() + '\'' +
                 ", description='" + this.getDescription() +'\'' +
                 ", status='" + this.getStatus() + '\'' +
-                ", epicsId='" + this.getEpicsId() + '}';
+                ", epicsId='" + this.getEpicsId() + "'}";
     }
 }

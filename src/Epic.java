@@ -4,14 +4,14 @@ import java.util.Objects;
 public class Epic extends Task {
     private ArrayList<Subtask> subtasks;
 
-    Epic(int id, String name, String description, ArrayList<Subtask> subtasks){
-        super(id, name, description);
-        this.subtasks = subtasks;
+    Epic(int id, String name, String description, Status status, ArrayList<Subtask> subtasks) {
+        super(id, name, description, status);
+        setSubtasks(subtasks);
     }
 
-    Epic(String name, String description, ArrayList<Subtask> subtasks){
-        super(name, description);
-        this.subtasks = subtasks;
+    Epic(String name, String description, Status status, ArrayList<Subtask> subtasks) {
+        super(name, description, status);
+        setSubtasks(subtasks);
     }
 
     public ArrayList<Subtask> getSubtasks() {
@@ -20,15 +20,55 @@ public class Epic extends Task {
 
     public void setSubtasks(ArrayList<Subtask> subtasks) {
         this.subtasks = subtasks;
+        updateStatus();
     }
 
-    public boolean deleteSubtask(Subtask subtask){
-        if (this.subtasks.contains(subtask)){
+    public void addSubtask(Subtask subtask) {
+        if (this.subtasks == null) {
+            this.subtasks = new ArrayList<>();
+        }
+        this.subtasks.add(subtask);
+        updateStatus();
+    }
+
+    public boolean updateSubtask(Subtask subtask) {
+        if (this.subtasks == null) return false;
+        boolean result = false;
+        for (Subtask currentSubtask : this.subtasks) {
+            if (subtask.getId() == currentSubtask.getId() && subtask.getEpicsId() == currentSubtask.getEpicsId()) {
+                currentSubtask.setName(subtask.getName());
+                currentSubtask.setDescription(subtask.getDescription());
+                currentSubtask.setStatus(subtask.getStatus());
+                result = true;
+                break;
+            }
+        }
+        updateStatus();
+        return result;
+    }
+
+    public boolean deleteSubtask(Subtask subtask) {
+        if (this.subtasks == null) return false;
+        if (this.subtasks.contains(subtask)) {
             this.subtasks.remove(subtask);
+            updateStatus();
             return true;
         } else {
             return false;
         }
+    }
+
+    public boolean deleteSubtask(int id) {
+        if (this.subtasks == null) return false;
+        for (int i = 0; i < subtasks.size(); i++) {
+            Subtask subtask = subtasks.get(i);
+            if (subtask.getId() == id) {
+                subtasks.remove(i);
+                updateStatus();
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -57,10 +97,34 @@ public class Epic extends Task {
                 ", description='" + this.getDescription() +'\'' +
                 ", status='" + this.getStatus() + '\'';
         if (this.getSubtasks() != null) {
-            result += ", subtasks.size='" + this.getSubtasks().size();
+            result += ", subtasks.size='" + this.getSubtasks().size() + '\'';
         } else {
             result += ", subtasks.size=null";
         }
         return result + '}';
+    }
+
+    private void updateStatus() {
+        if (this.subtasks == null || this.subtasks.size() == 0) {
+            setStatus(Status.NEW);
+            return;
+        }
+        int doneCount = 0;
+        int newCount = 0;
+
+        for (Subtask subtask : this.subtasks) {
+            if (subtask.getStatus() == Status.DONE) {
+                doneCount++;
+            } else if (subtask.getStatus() == Status.NEW) {
+                newCount++;
+            }
+        }
+        if (doneCount == this.subtasks.size()) {
+            setStatus(Status.DONE);
+        } else if (newCount == this.subtasks.size()) {
+            setStatus(Status.NEW);
+        } else {
+            setStatus(Status.IN_PROGRESS);
+        }
     }
 }

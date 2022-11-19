@@ -6,18 +6,18 @@ public class Task {
     private String description;
     private Status status;
 
-    Task(int id, String name, String description){
+    Task(int id, String name, String description, Status status) {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.status = Status.NEW;
+        this.status = status;
     }
 
-    Task(String name, String description){
+    Task(String name, String description, Status status) {
         this.id = 0;
         this.name = name;
         this.description = description;
-        this.status = Status.NEW;
+        this.status = status;
     }
 
     public int getId() {
