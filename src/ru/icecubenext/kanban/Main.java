@@ -1,5 +1,9 @@
 package ru.icecubenext.kanban;
 
+import ru.icecubenext.kanban.managers.*;
+import ru.icecubenext.kanban.tasks.*;
+import ru.icecubenext.kanban.util.Status;
+
 import java.util.ArrayList;
 
 public class Main {

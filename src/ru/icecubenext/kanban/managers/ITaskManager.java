@@ -1,4 +1,7 @@
-package ru.icecubenext.kanban;
+package ru.icecubenext.kanban.managers;
+
+import ru.icecubenext.kanban.tasks.*;
+
 
 import java.util.ArrayList;
 

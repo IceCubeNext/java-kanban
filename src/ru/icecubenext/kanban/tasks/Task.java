@@ -1,4 +1,6 @@
-package ru.icecubenext.kanban;
+package ru.icecubenext.kanban.tasks;
+
+import ru.icecubenext.kanban.util.Status;
 
 import java.util.Objects;
 

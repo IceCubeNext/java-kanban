@@ -1,4 +1,4 @@
-package ru.icecubenext.kanban;
+package ru.icecubenext.kanban.util;
 
 public enum Status {
     NEW,
