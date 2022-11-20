@@ -1,14 +1,16 @@
+package ru.icecubenext.kanban;
+
 import java.util.Objects;
 
 public class Subtask extends Task {
     private int epicsId;
-    Subtask(int id, int epicsId, String name, String description, Status status) {
-        super(id, name, description, status);
+    public Subtask(int id, int epicsId, String name, String description) {
+        super(id, name, description);
         this.epicsId = epicsId;
     }
 
-    Subtask(int epicsId, String name, String description, Status status) {
-        super(name, description, status);
+    public Subtask(int epicsId, String name, String description) {
+        super(name, description);
         this.epicsId = epicsId;
     }
 

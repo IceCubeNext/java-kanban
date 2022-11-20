@@ -1,4 +1,8 @@
-import java.util.*;
+package ru.icecubenext.kanban;
+
+import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Objects;
 
 public class TaskManager implements ITaskManager {
     private int currentId;
@@ -6,14 +10,14 @@ public class TaskManager implements ITaskManager {
     private final HashMap<Integer, Epic> epicsMap;
     private final HashMap<Integer, Subtask> subtasksMap;
 
-    TaskManager() {
+    public TaskManager() {
         this.currentId = 0;
         tasksMap = new HashMap<>();
         epicsMap = new HashMap<>();
         subtasksMap = new HashMap<>();
     }
 
-    TaskManager(int currentId,
+    public TaskManager(int currentId,
                 HashMap<Integer, Task> tasksMap,
                 HashMap<Integer, Epic> epicsMap,
                 HashMap<Integer, Subtask> subtasksMap) {
@@ -53,30 +57,15 @@ public class TaskManager implements ITaskManager {
     }
 
     public ArrayList<Task> getTasks() {
-        if (tasksMap == null) return null;
-        ArrayList<Task> result = new ArrayList<>();
-        for (Integer id: getSortedKeysOfTaskMap(tasksMap)) {
-            result.add(tasksMap.get(id));
-        }
-        return result;
+        return new ArrayList<>(tasksMap.values());
     }
 
     public ArrayList<Epic> getEpics() {
-        if (epicsMap == null) return null;
-        ArrayList<Epic> result = new ArrayList<>();
-        for (Integer id: getSortedKeysOfTaskMap(epicsMap)) {
-            result.add(epicsMap.get(id));
-        }
-        return result;
+        return new ArrayList<>(epicsMap.values());
     }
 
     public ArrayList<Subtask> getSubtasks() {
-        if (subtasksMap == null) return null;
-        ArrayList<Subtask> result = new ArrayList<>();
-        for (Integer id: getSortedKeysOfTaskMap(subtasksMap)) {
-            result.add(subtasksMap.get(id));
-        }
-        return result;
+        return new ArrayList<>(subtasksMap.values());
     }
 
     public Task getTask(int id) {
@@ -110,14 +99,14 @@ public class TaskManager implements ITaskManager {
     }
 
     public ArrayList<Subtask> getEpicsSubtasks(int id) {
-        if (epicsMap == null) return null;
+        ArrayList<Subtask> subtasks = new ArrayList<>();
         if (epicsMap.containsKey(id)) {
             Epic epic = epicsMap.get(id);
-            return epic.getSubtasks();
+            subtasks = epic.getSubtasks();
         } else {
             System.out.println("Ошибка! Не найден Эпик с id=" + id);
-            return null;
         }
+        return subtasks;
     }
 
     public boolean updateTask(Task task) {
@@ -142,13 +131,6 @@ public class TaskManager implements ITaskManager {
             currentEpic.setDescription(epic.getDescription());
             currentEpic.setStatus(epic.getStatus());
             updateEpicsSubtasks(currentEpic, epic);
-//            if (epic.getSubtasks() == null && currentEpic.getSubtasks() == null) {
-//                return true;
-//            } else if (epic.getSubtasks() == null || currentEpic.getSubtasks() == null) {
-//                recalculateSubtasks(currentEpic.getSubtasks(), epic.getSubtasks());
-//            } else if (!epic.getSubtasks().equals(currentEpic.getSubtasks())) {
-//                recalculateSubtasks(currentEpic.getSubtasks(), epic.getSubtasks());
-//            }
             return true;
         } else {
             System.out.println("Ошибка! Не найден Эпик с id=" + id);
@@ -182,12 +164,8 @@ public class TaskManager implements ITaskManager {
     }
 
     public boolean deleteTasks() {
-        boolean result = true;
-        ArrayList<Integer> keys = new ArrayList<>(tasksMap.keySet());
-        for (Integer id : keys) {
-            result = result & deleteTask(id);
-        }
-        return result;
+        tasksMap.clear();
+        return true;
     }
 
     public boolean deleteEpics() {
@@ -275,7 +253,7 @@ public class TaskManager implements ITaskManager {
 
     @Override
     public String toString() {
-        String result =  "TaskManager{" +
+        String result =  "ru.yandex.praktikum.kanban.TaskManager{" +
                 "currentId='" + this.currentId;
         if (this.tasksMap != null) {
             result += ", tasksMap.size='" + this.tasksMap.size();
@@ -295,12 +273,6 @@ public class TaskManager implements ITaskManager {
             result += ", subtasksMap.size=null";
         }
         return result + '}';
-    }
-
-    private <T> ArrayList<Integer> getSortedKeysOfTaskMap(HashMap<Integer, T> map) {
-        ArrayList<Integer> keysSortedList = new ArrayList<>(map.keySet());
-        Collections.sort(keysSortedList);
-        return keysSortedList;
     }
 
     private void updateEpicsSubtasks(Epic oldEpic, Epic newEpic) {

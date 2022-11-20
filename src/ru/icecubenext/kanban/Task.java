@@ -1,23 +1,23 @@
+package ru.icecubenext.kanban;
+
 import java.util.Objects;
 
 public class Task {
     private int id;
     private String name;
     private String description;
-    private Status status;
+    private Status status = Status.NEW;
 
-    Task(int id, String name, String description, Status status) {
+    public Task(int id, String name, String description) {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.status = status;
     }
 
-    Task(String name, String description, Status status) {
+    public Task(String name, String description) {
         this.id = 0;
         this.name = name;
         this.description = description;
-        this.status = status;
     }
 
     public int getId() {

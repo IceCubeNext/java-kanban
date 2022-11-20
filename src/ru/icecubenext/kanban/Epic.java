@@ -1,16 +1,18 @@
+package ru.icecubenext.kanban;
+
 import java.util.ArrayList;
 import java.util.Objects;
 
 public class Epic extends Task {
     private ArrayList<Subtask> subtasks;
 
-    Epic(int id, String name, String description, Status status, ArrayList<Subtask> subtasks) {
-        super(id, name, description, status);
+    public Epic(int id, String name, String description, ArrayList<Subtask> subtasks) {
+        super(id, name, description);
         setSubtasks(subtasks);
     }
 
-    Epic(String name, String description, Status status, ArrayList<Subtask> subtasks) {
-        super(name, description, status);
+    public Epic(String name, String description, ArrayList<Subtask> subtasks) {
+        super(name, description);
         setSubtasks(subtasks);
     }
 
@@ -72,6 +74,11 @@ public class Epic extends Task {
     }
 
     @Override
+    public void setStatus(Status status){
+        updateStatus();
+    }
+
+    @Override
     public boolean equals(Object obj) {
         if (obj == this) return true;
         if (obj == null || obj.getClass() != this.getClass()) return false;
@@ -106,7 +113,7 @@ public class Epic extends Task {
 
     private void updateStatus() {
         if (this.subtasks == null || this.subtasks.size() == 0) {
-            setStatus(Status.NEW);
+            super.setStatus(Status.NEW);
             return;
         }
         int doneCount = 0;
@@ -120,11 +127,11 @@ public class Epic extends Task {
             }
         }
         if (doneCount == this.subtasks.size()) {
-            setStatus(Status.DONE);
+            super.setStatus(Status.DONE);
         } else if (newCount == this.subtasks.size()) {
-            setStatus(Status.NEW);
+            super.setStatus(Status.NEW);
         } else {
-            setStatus(Status.IN_PROGRESS);
+            super.setStatus(Status.IN_PROGRESS);
         }
     }
 }

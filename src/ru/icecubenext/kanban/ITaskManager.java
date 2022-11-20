@@ -1,3 +1,5 @@
+package ru.icecubenext.kanban;
+
 import java.util.ArrayList;
 
 public interface ITaskManager {
