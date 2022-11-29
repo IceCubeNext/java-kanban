@@ -1,8 +1,8 @@
 package ru.icecubenext.kanban;
 
 import ru.icecubenext.kanban.managers.*;
-import ru.icecubenext.kanban.tasks.*;
-import ru.icecubenext.kanban.util.Status;
+import ru.icecubenext.kanban.model.*;
+import ru.icecubenext.kanban.model.Status;
 
 import java.util.ArrayList;
 
@@ -16,7 +16,7 @@ public class Main {
     }
     
     private static void testFromPraktikum() {
-        ITaskManager taskManager = new TaskManager();
+        TaskManager taskManager = new InMemoryTaskManager();
         Task task1 = new Task("Задача 1", "Описание з. 1");
         Task task2 = new Task("Задача 2", "Описание з. 2");
         taskManager.addTask(task1);
@@ -52,7 +52,7 @@ public class Main {
     }
 
     public static void addTest() {
-        ITaskManager taskManager = new TaskManager();
+        TaskManager taskManager = new InMemoryTaskManager();
         Task task1 = new Task("Задача 1", "Описание з. 1");
         Task task2 = new Task("Задача 2", "Описание з. 2");
         Task task3 = new Task("Задача 3", "Описание з. 3");
@@ -103,7 +103,7 @@ public class Main {
     }
 
     public static void getTest() {
-        ITaskManager taskManager = new TaskManager();
+        TaskManager taskManager = new InMemoryTaskManager();
         Task task1 = new Task("Задача 1", "Описание з. 1");
         Task task2 = new Task("Задача 2", "Описание з. 2");
         int task1Id = taskManager.addTask(task1);
@@ -143,7 +143,7 @@ public class Main {
     }
 
     public static void updateTest() {
-        ITaskManager taskManager = new TaskManager();
+        TaskManager taskManager = new InMemoryTaskManager();
         Task task1 = new Task("Задача 1", "Описание з. 1");
         int task1Id = taskManager.addTask(task1);
         Task updatableTask = new Task(task1Id, "Задача 2", "Описание з. 2");
@@ -236,7 +236,7 @@ public class Main {
     }
 
     public static void deleteTest() {
-        ITaskManager taskManager = new TaskManager();
+        TaskManager taskManager = new InMemoryTaskManager();
         Task task1 = new Task("Задача 1", "Описание з. 1");
         Task task2 = new Task("Задача 2", "Описание з. 2");
         task2.setStatus(Status.IN_PROGRESS);

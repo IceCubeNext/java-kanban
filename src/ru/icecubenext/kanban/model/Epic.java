@@ -1,42 +1,34 @@
-package ru.icecubenext.kanban.tasks;
-
-import ru.icecubenext.kanban.util.Status;
+package ru.icecubenext.kanban.model;
 
 import java.util.ArrayList;
 import java.util.Objects;
 
 public class Epic extends Task {
-    private ArrayList<Subtask> subtasks;
-
-    public Epic(int id, String name, String description, ArrayList<Subtask> subtasks) {
-        super(id, name, description);
-        setSubtasks(subtasks);
-    }
+    private ArrayList<Subtask> subtasks = new ArrayList<>();
 
     public Epic(String name, String description, ArrayList<Subtask> subtasks) {
         super(name, description);
-        setSubtasks(subtasks);
+        if (subtasks != null) {
+            this.subtasks = subtasks;
+        }
+    }
+
+    public Epic(int id, String name, String description, ArrayList<Subtask> subtasks) {
+        super(id, name, description);
+        if (subtasks != null) {
+            this.subtasks = subtasks;
+        }
     }
 
     public ArrayList<Subtask> getSubtasks() {
         return subtasks;
     }
 
-    public void setSubtasks(ArrayList<Subtask> subtasks) {
-        this.subtasks = subtasks;
-        updateStatus();
-    }
-
     public void addSubtask(Subtask subtask) {
-        if (this.subtasks == null) {
-            this.subtasks = new ArrayList<>();
-        }
         this.subtasks.add(subtask);
-        updateStatus();
     }
 
     public boolean updateSubtask(Subtask subtask) {
-        if (this.subtasks == null) return false;
         boolean result = false;
         for (Subtask currentSubtask : this.subtasks) {
             if (subtask.getId() == currentSubtask.getId() && subtask.getEpicsId() == currentSubtask.getEpicsId()) {
@@ -47,15 +39,12 @@ public class Epic extends Task {
                 break;
             }
         }
-        updateStatus();
         return result;
     }
 
     public boolean deleteSubtask(Subtask subtask) {
-        if (this.subtasks == null) return false;
         if (this.subtasks.contains(subtask)) {
             this.subtasks.remove(subtask);
-            updateStatus();
             return true;
         } else {
             return false;
@@ -63,12 +52,10 @@ public class Epic extends Task {
     }
 
     public boolean deleteSubtask(int id) {
-        if (this.subtasks == null) return false;
         for (int i = 0; i < subtasks.size(); i++) {
             Subtask subtask = subtasks.get(i);
             if (subtask.getId() == id) {
                 subtasks.remove(i);
-                updateStatus();
                 return true;
             }
         }
@@ -76,8 +63,27 @@ public class Epic extends Task {
     }
 
     @Override
-    public void setStatus(Status status){
-        updateStatus();
+    public Status getStatus() {
+        if (this.subtasks.size() == 0) {
+            return Status.NEW;
+        }
+        int doneCount = 0;
+        int newCount = 0;
+
+        for (Subtask subtask : this.subtasks) {
+            if (subtask.getStatus() == Status.DONE) {
+                doneCount++;
+            } else if (subtask.getStatus() == Status.NEW) {
+                newCount++;
+            }
+        }
+        if (doneCount == this.subtasks.size()) {
+            return Status.DONE;
+        } else if (newCount == this.subtasks.size()) {
+            return Status.NEW;
+        } else {
+            return Status.IN_PROGRESS;
+        }
     }
 
     @Override
@@ -111,29 +117,5 @@ public class Epic extends Task {
             result += ", subtasks.size=null";
         }
         return result + '}';
-    }
-
-    private void updateStatus() {
-        if (this.subtasks == null || this.subtasks.size() == 0) {
-            super.setStatus(Status.NEW);
-            return;
-        }
-        int doneCount = 0;
-        int newCount = 0;
-
-        for (Subtask subtask : this.subtasks) {
-            if (subtask.getStatus() == Status.DONE) {
-                doneCount++;
-            } else if (subtask.getStatus() == Status.NEW) {
-                newCount++;
-            }
-        }
-        if (doneCount == this.subtasks.size()) {
-            super.setStatus(Status.DONE);
-        } else if (newCount == this.subtasks.size()) {
-            super.setStatus(Status.NEW);
-        } else {
-            super.setStatus(Status.IN_PROGRESS);
-        }
     }
 }
