@@ -95,7 +95,7 @@ public class Main {
         result &= myAssertEquals(taskManager.getEpic(epic3Id).getStatus(), Status.NEW, "некорректный статус");
         result &= myAssertInt(epic1.getSubtasks().size(), 2, "некорректное количество подзадач");
         result &= myAssertInt(epic2.getSubtasks().size(), 1, "некорректное количество подзадач");
-        result &= myAssertEquals(epic3.getSubtasks(), null, "некорректное количество подзадач");
+        result &= myAssertEquals(epic3.getSubtasks().size(), 0, "некорректное количество подзадач");
 
         if (result) {
             System.out.println("Тесты на добавление объектов пройдены");
@@ -170,9 +170,11 @@ public class Main {
 
         Subtask subtask1 = new Subtask(epic1Id, "Подзадача 1", "Описание п. 1");
         Subtask subtask2 = new Subtask(epic1Id, "Подзадача 2", "Описание п. 2");
+        int subtask1Id = taskManager.addSubtask(subtask1);
+        int subtask2Id = taskManager.addSubtask(subtask2);
         ArrayList<Subtask> subtasks = new ArrayList<>();
-        subtasks.add(subtask1);
-        subtasks.add(subtask2);
+        subtasks.add(taskManager.getSubtask(subtask1Id));
+        subtasks.add(taskManager.getSubtask(subtask2Id));
         updatableEpic = new Epic(epic1Id, "Обновленный эпик 1", "Обновленное описание э. 1", subtasks);
         taskManager.updateEpic(updatableEpic);
         result &= myAssertInt(taskManager.getEpics().size(), 2, "неверное количество объектов");
@@ -223,12 +225,9 @@ public class Main {
         taskManager.deleteSubtasks();
         taskManager.deleteEpics();
         taskManager.deleteTasks();
-        epic1Id = taskManager.addEpic(epic1);
-        updatableEpic = new Epic(epic1Id, "Обновленный эпик 1", "Обновленное описание э. 1", subtasks);
-        taskManager.updateEpic(updatableEpic);
-        result &= myAssertInt(taskManager.getEpics().size(), 1, "неверное количество объектов");
-        result &= myAssertInt(taskManager.getEpic(epic1Id).getSubtasks().size(), 2, "неверное количество объектов");
-        result &= myAssertInt(taskManager.getSubtasks().size(),2, "неверное количество объектов");
+        result &= myAssertInt(taskManager.getEpics().size(), 0, "неверное количество объектов");
+        result &= myAssertInt(taskManager.getTasks().size(), 0, "неверное количество объектов");
+        result &= myAssertInt(taskManager.getSubtasks().size(),0, "неверное количество объектов");
 
         if (result) {
             System.out.println("Тесты на обновление объектов пройдены");

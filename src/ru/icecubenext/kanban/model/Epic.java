@@ -6,13 +6,6 @@ import java.util.Objects;
 public class Epic extends Task {
     private ArrayList<Subtask> subtasks = new ArrayList<>();
 
-    public Epic(String name, String description, ArrayList<Subtask> subtasks) {
-        super(name, description);
-        if (subtasks != null) {
-            this.subtasks = subtasks;
-        }
-    }
-
     public Epic(int id, String name, String description, ArrayList<Subtask> subtasks) {
         super(id, name, description);
         if (subtasks != null) {
@@ -20,46 +13,15 @@ public class Epic extends Task {
         }
     }
 
+    public Epic(String name, String description, ArrayList<Subtask> subtasks) {
+        super(name, description);
+        if (subtasks != null) {
+            this.subtasks = subtasks;
+        }
+    }
+
     public ArrayList<Subtask> getSubtasks() {
         return subtasks;
-    }
-
-    public void addSubtask(Subtask subtask) {
-        this.subtasks.add(subtask);
-    }
-
-    public boolean updateSubtask(Subtask subtask) {
-        boolean result = false;
-        for (Subtask currentSubtask : this.subtasks) {
-            if (subtask.getId() == currentSubtask.getId() && subtask.getEpicsId() == currentSubtask.getEpicsId()) {
-                currentSubtask.setName(subtask.getName());
-                currentSubtask.setDescription(subtask.getDescription());
-                currentSubtask.setStatus(subtask.getStatus());
-                result = true;
-                break;
-            }
-        }
-        return result;
-    }
-
-    public boolean deleteSubtask(Subtask subtask) {
-        if (this.subtasks.contains(subtask)) {
-            this.subtasks.remove(subtask);
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public boolean deleteSubtask(int id) {
-        for (int i = 0; i < subtasks.size(); i++) {
-            Subtask subtask = subtasks.get(i);
-            if (subtask.getId() == id) {
-                subtasks.remove(i);
-                return true;
-            }
-        }
-        return false;
     }
 
     @Override
