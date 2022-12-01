@@ -14,9 +14,10 @@ public class Main {
         updateTest();
         deleteTest();
     }
-    
+
     private static void testFromPraktikum() {
-        TaskManager taskManager = new InMemoryTaskManager();
+        Manager manager = new Manager();
+        TaskManager taskManager = manager.getDefault();
         Task task1 = new Task("Задача 1", "Описание з. 1");
         Task task2 = new Task("Задача 2", "Описание з. 2");
         taskManager.addTask(task1);
@@ -48,11 +49,11 @@ public class Main {
         System.out.println(taskManager.getTasks());
         System.out.println(taskManager.getEpics());
         System.out.println(taskManager.getSubtasks());
-        System.out.println();
     }
 
     public static void addTest() {
-        TaskManager taskManager = new InMemoryTaskManager();
+        Manager manager = new Manager();
+        TaskManager taskManager = manager.getDefault();
         Task task1 = new Task("Задача 1", "Описание з. 1");
         Task task2 = new Task("Задача 2", "Описание з. 2");
         Task task3 = new Task("Задача 3", "Описание з. 3");
@@ -103,7 +104,8 @@ public class Main {
     }
 
     public static void getTest() {
-        TaskManager taskManager = new InMemoryTaskManager();
+        Manager manager = new Manager();
+        TaskManager taskManager = manager.getDefault();
         Task task1 = new Task("Задача 1", "Описание з. 1");
         Task task2 = new Task("Задача 2", "Описание з. 2");
         int task1Id = taskManager.addTask(task1);
@@ -143,7 +145,8 @@ public class Main {
     }
 
     public static void updateTest() {
-        TaskManager taskManager = new InMemoryTaskManager();
+        Manager manager = new Manager();
+        TaskManager taskManager = manager.getDefault();
         Task task1 = new Task("Задача 1", "Описание з. 1");
         int task1Id = taskManager.addTask(task1);
         Task updatableTask = new Task(task1Id, "Задача 2", "Описание з. 2");
@@ -235,7 +238,8 @@ public class Main {
     }
 
     public static void deleteTest() {
-        TaskManager taskManager = new InMemoryTaskManager();
+        Manager manager = new Manager();
+        TaskManager taskManager = manager.getDefault();
         Task task1 = new Task("Задача 1", "Описание з. 1");
         Task task2 = new Task("Задача 2", "Описание з. 2");
         task2.setStatus(Status.IN_PROGRESS);
