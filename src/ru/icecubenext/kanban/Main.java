@@ -8,16 +8,15 @@ import java.util.ArrayList;
 
 public class Main {
     public static void main(String[] args) {
-        testFromPraktikum();
+        testFromPracticum();
         addTest();
         getTest();
         updateTest();
         deleteTest();
     }
-
-    private static void testFromPraktikum() {
-        Manager manager = new Manager();
-        TaskManager taskManager = manager.getDefault();
+    
+    private static void testFromPracticum() {
+        TaskManager taskManager = new InMemoryTaskManager();
         Task task1 = new Task("Задача 1", "Описание з. 1");
         Task task2 = new Task("Задача 2", "Описание з. 2");
         taskManager.addTask(task1);
@@ -138,7 +137,6 @@ public class Main {
         int epics2SubtasksCount = taskManager.getEpicsSubtasks(epic2Id).size();
         result &= myAssertInt(epics1SubtasksCount, 2, "неверное количество объектов");
         result &= myAssertInt(epics2SubtasksCount, 1, "неверное количество объектов");
-
         if (result) {
             System.out.println("Тесты на получение объектов пройдены");
         }

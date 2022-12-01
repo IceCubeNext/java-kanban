@@ -1,26 +1,27 @@
 package ru.icecubenext.kanban.model;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class Epic extends Task {
-    private ArrayList<Subtask> subtasks = new ArrayList<>();
+    private List<Subtask> subtasks = new ArrayList<>();
 
-    public Epic(int id, String name, String description, ArrayList<Subtask> subtasks) {
+    public Epic(int id, String name, String description, List<Subtask> subtasks) {
         super(id, name, description);
         if (subtasks != null) {
             this.subtasks = subtasks;
         }
     }
 
-    public Epic(String name, String description, ArrayList<Subtask> subtasks) {
+    public Epic(String name, String description, List<Subtask> subtasks) {
         super(name, description);
         if (subtasks != null) {
             this.subtasks = subtasks;
         }
     }
 
-    public ArrayList<Subtask> getSubtasks() {
+    public List<Subtask> getSubtasks() {
         return subtasks;
     }
 
@@ -31,7 +32,6 @@ public class Epic extends Task {
         }
         int doneCount = 0;
         int newCount = 0;
-
         for (Subtask subtask : this.subtasks) {
             if (subtask.getStatus() == Status.DONE) {
                 doneCount++;
