@@ -1,6 +1,9 @@
-package ru.icecubenext.kanban.managers;
+package main.ru.icecubenext.kanban.managers;
 
-import ru.icecubenext.kanban.model.*;
+import main.ru.icecubenext.kanban.model.Epic;
+import main.ru.icecubenext.kanban.model.Subtask;
+import main.ru.icecubenext.kanban.model.Task;
+
 import java.util.List;
 
 public interface TaskManager {

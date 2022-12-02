@@ -1,4 +1,4 @@
-package ru.icecubenext.kanban.model;
+package main.ru.icecubenext.kanban.model;
 
 public enum Status {
     NEW,

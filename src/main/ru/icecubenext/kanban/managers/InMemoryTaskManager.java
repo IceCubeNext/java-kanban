@@ -1,46 +1,55 @@
-package ru.icecubenext.kanban.managers;
+package main.ru.icecubenext.kanban.managers;
 
-import ru.icecubenext.kanban.model.*;
+import main.ru.icecubenext.kanban.model.Epic;
+import main.ru.icecubenext.kanban.model.Subtask;
+import main.ru.icecubenext.kanban.model.Task;
 
 import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
     private int currentId;
-    private int max_history_length = 10;
+    public HistoryManager historyManager = Manager.getDefaultHistory();
     private final HashMap<Integer, Task> tasksMap = new HashMap<>();
     private final HashMap<Integer, Epic> epicsMap = new HashMap<>();
     private final HashMap<Integer, Subtask> subtasksMap = new HashMap<>();
     private final HashMap<Integer, List<Subtask>> epicsSubtasksMap  = new HashMap<>();
 
-    private final Queue<Task> history = new LinkedList<>();
-
     public InMemoryTaskManager() {
         this.currentId = 0;
     }
 
-    public void setHistoryLength(int length) {
-        if (length >= 0) {
-            max_history_length = length;
+    public int addTask(Task task) {
+        if (!tasksMap.containsValue(task)) {
+            int id = getNewId();
+            task.setId(id);
+            tasksMap.put(id, task);
+            return id;
+        } else {
+            System.out.println("Ошибка! Добавляемая задача уже существует");
+            return -1;
         }
     }
 
-    public int addTask(Task task) {
-        int id = getNewId();
-        task.setId(id);
-        tasksMap.put(id, task);
-        return id;
-    }
-
     public int addEpic(Epic epic) {
-        int id = getNewId();
-        epic.setId(id);
-        List<Subtask> epicsSubtasks = epic.getSubtasks();
-        epicsMap.put(id, epic);
-        epicsSubtasksMap.put(id, epicsSubtasks);
-        return id;
+        if (!epicsMap.containsValue(epic)) {
+            int id = getNewId();
+            epic.setId(id);
+            List<Subtask> epicsSubtasks = epic.getSubtasks();
+            epicsMap.put(id, epic);
+            epicsSubtasksMap.put(id, epicsSubtasks);
+            return id;
+        } else {
+            System.out.println("Ошибка! Добавляемый эпик уже существует");
+            return -1;
+        }
+
     }
 
     public int addSubtask(Subtask subtask) {
+        if (subtasksMap.containsValue(subtask)) {
+            System.out.println("Ошибка! Добавляемая подзадача уже существует");
+            return -1;
+        }
         int epicId = subtask.getEpicsId();
         if (epicsMap.containsKey(epicId)) {
             int id = getNewId();
@@ -68,7 +77,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     public Task getTask(int id) {
         if (tasksMap.containsKey(id)) {
-            addToHistory(tasksMap.get(id));
+            historyManager.add(tasksMap.get(id));
             return tasksMap.get(id);
         } else {
             System.out.println("Ошибка! Не найдена задача с id=" + id);
@@ -78,7 +87,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     public Epic getEpic(int id) {
         if (epicsMap.containsKey(id)) {
-            addToHistory(epicsMap.get(id));
+            historyManager.add(epicsMap.get(id));
             return epicsMap.get(id);
         } else {
             System.out.println("Ошибка! Не найден Эпик с id=" + id);
@@ -88,7 +97,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     public Subtask getSubtask(int id) {
         if (subtasksMap.containsKey(id)) {
-            addToHistory(subtasksMap.get(id));
+            historyManager.add(subtasksMap.get(id));
             return subtasksMap.get(id);
         } else {
             System.out.println("Ошибка! Не найдена подзадача с id=" + id);
@@ -101,7 +110,7 @@ public class InMemoryTaskManager implements TaskManager {
             return epicsSubtasksMap.get(id);
         } else {
             System.out.println("Ошибка! Не найден Эпик с id=" + id);
-            return null;
+            return new ArrayList<>();
         }
     }
 
@@ -219,14 +228,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     public List<Task> getHistory() {
-        return new ArrayList<>(history);
-    }
-
-    private void addToHistory(Task task) {
-        history.add(task);
-        if (history.size() > max_history_length) {
-            history.poll();
-        }
+        return historyManager.getHistory();
     }
 
     public int getNewId() {
