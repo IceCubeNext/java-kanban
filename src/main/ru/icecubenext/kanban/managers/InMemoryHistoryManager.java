@@ -11,6 +11,8 @@ public class InMemoryHistoryManager implements HistoryManager {
     int MAX_HISTORY_SIZE = 10;
     private final Queue<Task> history = new LinkedList<>();
 
+    // не совсем понял по этому методу. Как я понимаю он вставляет новые элементы в конец очереди, а если размер
+    //  превысит MAX_HISTORY_SIZE будет удалять из начала (т.е. самые старые)
     @Override
     public void add(Task task) {
         history.add(task);

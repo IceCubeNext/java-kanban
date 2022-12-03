@@ -1,7 +1,7 @@
 package main.ru.icecubenext.kanban.managers;
 
 public class Manager {
-    public TaskManager getDefault() {
+    public static TaskManager getDefault() {
         return new InMemoryTaskManager();
     }
 

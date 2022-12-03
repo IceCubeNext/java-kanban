@@ -6,6 +6,9 @@ import main.ru.icecubenext.kanban.model.*;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class InMemoryHistoryManagerTest {
 
     @Test
@@ -19,20 +22,28 @@ public class InMemoryHistoryManagerTest {
         Subtask subtask1 = new Subtask(epic1Id, "Подзадача 1", "Описание п. 1");
         int task1Id = taskManager.addTask(task1);
         int subtask1Id = taskManager.addSubtask(subtask1);
+        List<Task> expected = new ArrayList<>();
 
         Assert.assertEquals(0, taskManager.getHistory().size());
         taskManager.getTask(task1Id);
+        expected.add(task1);
         Assert.assertEquals(1, taskManager.getHistory().size());
         taskManager.getTask(task1Id);
+        expected.add(task1);
         Assert.assertEquals(2, taskManager.getHistory().size());
         taskManager.getEpic(epic1Id);
+        expected.add(epic1);
         Assert.assertEquals(3, taskManager.getHistory().size());
         taskManager.getEpic(epic1Id);
+        expected.add(epic1);
         Assert.assertEquals(4, taskManager.getHistory().size());
         taskManager.getSubtask(subtask1Id);
+        expected.add(subtask1);
         Assert.assertEquals(5, taskManager.getHistory().size());
         taskManager.getSubtask(subtask1Id);
+        expected.add(subtask1);
         Assert.assertEquals(6, taskManager.getHistory().size());
+        Assert.assertEquals(expected, taskManager.getHistory());
     }
 
     @Test
