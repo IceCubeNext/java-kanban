@@ -6,8 +6,7 @@ import main.ru.icecubenext.kanban.managers.TaskManager;
 
 public class Main {
     public static void main(String[] args) {
-        Manager manager = new Manager();
-        TaskManager taskManager = manager.getDefault();
+        TaskManager taskManager = Manager.getDefault();
         Task task1 = new Task("Задача 1", "Описание з. 1");
         Task task2 = new Task("Задача 2", "Описание з. 2");
         Epic epic1 = new Epic("Эпик1", "Описание э. 1", null);

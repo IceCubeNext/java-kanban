@@ -10,8 +10,7 @@ public class InMemoryTaskManagerTest {
 
     @org.junit.Test
     public void addTask() {
-        Manager manager = new Manager();
-        TaskManager taskManager = manager.getDefault();
+        TaskManager taskManager = Manager.getDefault();
         Assert.assertEquals(0, taskManager.getTasks().size());
         Task task1 = new Task("Задача 1", "Описание з. 1");
         Task task2 = new Task("Задача 2", "Описание з. 2");
@@ -31,8 +30,7 @@ public class InMemoryTaskManagerTest {
 
     @org.junit.Test
     public void addEpic() {
-        Manager manager = new Manager();
-        TaskManager taskManager = manager.getDefault();
+        TaskManager taskManager = Manager.getDefault();
         Assert.assertEquals(0, taskManager.getEpics().size());
         Epic epic1 = new Epic("Эпик1", "Описание э. 1", null);
         Epic epic2 = new Epic("Эпик2", "Описание э. 2", null);
@@ -49,8 +47,7 @@ public class InMemoryTaskManagerTest {
 
     @org.junit.Test
     public void addSubtask() {
-        Manager manager = new Manager();
-        TaskManager taskManager = manager.getDefault();
+        TaskManager taskManager = Manager.getDefault();
         Assert.assertEquals(0, taskManager.getSubtasks().size());
         Epic epic1 = new Epic("Эпик1", "Описание э. 1", null);
         Epic epic2 = new Epic("Эпик2", "Описание э. 2", null);
@@ -85,8 +82,7 @@ public class InMemoryTaskManagerTest {
 
     @org.junit.Test
     public void getTasks() {
-        Manager manager = new Manager();
-        TaskManager taskManager = manager.getDefault();
+        TaskManager taskManager = Manager.getDefault();
         Assert.assertNotNull(taskManager.getTasks());
         Assert.assertEquals(new ArrayList<Task>(), taskManager.getTasks());
         Task task1 = new Task("Задача 1", "Описание з. 1");
@@ -97,8 +93,7 @@ public class InMemoryTaskManagerTest {
 
     @org.junit.Test
     public void getEpics() {
-        Manager manager = new Manager();
-        TaskManager taskManager = manager.getDefault();
+        TaskManager taskManager = Manager.getDefault();
         Assert.assertNotNull(taskManager.getEpics());
         Assert.assertEquals(new ArrayList<Epic>(), taskManager.getEpics());
         Epic epic1 = new Epic("Эпик1", "Описание э. 1", null);
@@ -109,8 +104,7 @@ public class InMemoryTaskManagerTest {
 
     @org.junit.Test
     public void getSubtasks() {
-        Manager manager = new Manager();
-        TaskManager taskManager = manager.getDefault();
+        TaskManager taskManager = Manager.getDefault();
         Assert.assertNotNull(taskManager.getSubtasks());
         Assert.assertEquals(new ArrayList<Subtask>(), taskManager.getSubtasks());
         Epic epic1 = new Epic("Эпик0", "Описание э. 0", null);
@@ -123,8 +117,7 @@ public class InMemoryTaskManagerTest {
 
     @org.junit.Test
     public void getTask() {
-        Manager manager = new Manager();
-        TaskManager taskManager = manager.getDefault();
+        TaskManager taskManager = Manager.getDefault();
         Assert.assertNull(taskManager.getTask(0));
         Task task1 = new Task("Задача 1", "Описание з. 1");
         int task1Id = taskManager.addTask(task1);
@@ -134,8 +127,7 @@ public class InMemoryTaskManagerTest {
 
     @org.junit.Test
     public void getEpic() {
-        Manager manager = new Manager();
-        TaskManager taskManager = manager.getDefault();
+        TaskManager taskManager = Manager.getDefault();
         Assert.assertNull(taskManager.getEpic(0));
         Epic epic1 = new Epic("Эпик1", "Описание э. 1", null);
         int epic1Id = taskManager.addEpic(epic1);
@@ -144,8 +136,7 @@ public class InMemoryTaskManagerTest {
 
     @org.junit.Test
     public void getSubtask() {
-        Manager manager = new Manager();
-        TaskManager taskManager = manager.getDefault();
+        TaskManager taskManager = Manager.getDefault();
         Assert.assertNull(taskManager.getSubtask(0));
         Epic epic1 = new Epic("Эпик1", "Описание э. 1", null);
         int epic1Id = taskManager.addEpic(epic1);
@@ -156,8 +147,7 @@ public class InMemoryTaskManagerTest {
 
     @org.junit.Test
     public void getEpicsSubtasks() {
-        Manager manager = new Manager();
-        TaskManager taskManager = manager.getDefault();
+        TaskManager taskManager = Manager.getDefault();
         Assert.assertNotNull(taskManager.getEpicsSubtasks(0));
         Assert.assertEquals(new ArrayList<Subtask>(), taskManager.getEpicsSubtasks(0));
         Epic epic1 = new Epic("Эпик1", "Описание э. 1", null);
@@ -172,8 +162,7 @@ public class InMemoryTaskManagerTest {
 
     @org.junit.Test
     public void updateTask() {
-        Manager manager = new Manager();
-        TaskManager taskManager = manager.getDefault();
+        TaskManager taskManager = Manager.getDefault();
         Task task1 = new Task("Задача 1", "Описание з. 1");
         int task1Id = taskManager.addTask(task1);
         Assert.assertEquals(1, taskManager.getTasks().size());
@@ -186,8 +175,7 @@ public class InMemoryTaskManagerTest {
 
     @org.junit.Test
     public void updateEpic() {
-        Manager manager = new Manager();
-        TaskManager taskManager = manager.getDefault();
+        TaskManager taskManager = Manager.getDefault();
         Epic epic1 = new Epic("Эпик1", "Описание э. 1", null);
         int epic1Id = taskManager.addEpic(epic1);
         Assert.assertEquals(1, taskManager.getEpics().size());
@@ -210,8 +198,7 @@ public class InMemoryTaskManagerTest {
 
     @org.junit.Test
     public void updateSubtask() {
-        Manager manager = new Manager();
-        TaskManager taskManager = manager.getDefault();
+        TaskManager taskManager = Manager.getDefault();
         Epic epic1 = new Epic("Эпик1", "Описание э. 1", null);
         int epic1Id = taskManager.addEpic(epic1);
         Subtask subtask1 = new Subtask(epic1Id, "Подзадача 1", "Описание п. 1");
@@ -235,8 +222,7 @@ public class InMemoryTaskManagerTest {
 
     @org.junit.Test
     public void deleteTasks() {
-        Manager manager = new Manager();
-        TaskManager taskManager = manager.getDefault();
+        TaskManager taskManager = Manager.getDefault();
         Assert.assertEquals(0, taskManager.getTasks().size());
         Task task1 = new Task("Задача 1", "Описание з. 1");
         Task task2 = new Task("Задача 2", "Описание з. 2");
@@ -249,8 +235,7 @@ public class InMemoryTaskManagerTest {
 
     @org.junit.Test
     public void deleteEpics() {
-        Manager manager = new Manager();
-        TaskManager taskManager = manager.getDefault();
+        TaskManager taskManager = Manager.getDefault();
         Assert.assertEquals(0, taskManager.getEpics().size());
         Epic epic1 = new Epic("Эпик1", "Описание э. 1", null);
         Epic epic2 = new Epic("Эпик3", "Описание э. 3", null);
@@ -269,8 +254,7 @@ public class InMemoryTaskManagerTest {
 
     @org.junit.Test
     public void deleteSubtasks() {
-        Manager manager = new Manager();
-        TaskManager taskManager = manager.getDefault();
+        TaskManager taskManager = Manager.getDefault();
         Assert.assertEquals(0, taskManager.getSubtasks().size());
         Epic epic1 = new Epic("Эпик1", "Описание э. 1", null);
         int epic1Id = taskManager.addEpic(epic1);
@@ -288,8 +272,7 @@ public class InMemoryTaskManagerTest {
 
     @org.junit.Test
     public void deleteTask() {
-        Manager manager = new Manager();
-        TaskManager taskManager = manager.getDefault();
+        TaskManager taskManager = Manager.getDefault();
         Assert.assertEquals(0, taskManager.getTasks().size());
         Task task1 = new Task("Задача 1", "Описание з. 1");
         Task task2 = new Task("Задача 2", "Описание з. 2");
@@ -307,8 +290,7 @@ public class InMemoryTaskManagerTest {
 
     @org.junit.Test
     public void deleteEpic() {
-        Manager manager = new Manager();
-        TaskManager taskManager = manager.getDefault();
+        TaskManager taskManager = Manager.getDefault();
         Assert.assertEquals(0, taskManager.getEpics().size());
         Epic epic1 = new Epic("Эпик4", "Описание э. 4", null);
         Epic epic2 = new Epic("Эпик5", "Описание э. 5", null);
@@ -336,8 +318,7 @@ public class InMemoryTaskManagerTest {
 
     @org.junit.Test
     public void deleteSubtask() {
-        Manager manager = new Manager();
-        TaskManager taskManager = manager.getDefault();
+        TaskManager taskManager = Manager.getDefault();
         Assert.assertEquals(0, taskManager.getSubtasks().size());
         Epic epic1 = new Epic("Эпик1", "Описание э. 1", null);
         int epic1Id = taskManager.addEpic(epic1);
