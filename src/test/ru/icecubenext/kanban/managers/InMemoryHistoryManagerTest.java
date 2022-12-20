@@ -29,20 +29,17 @@ public class InMemoryHistoryManagerTest {
         expected.add(task1);
         Assert.assertEquals(1, taskManager.getHistory().size());
         taskManager.getTask(task1Id);
-        expected.add(task1);
+        Assert.assertEquals(1, taskManager.getHistory().size());
+        taskManager.getEpic(epic1Id);
+        expected.add(epic1);
         Assert.assertEquals(2, taskManager.getHistory().size());
         taskManager.getEpic(epic1Id);
-        expected.add(epic1);
+        Assert.assertEquals(2, taskManager.getHistory().size());
+        taskManager.getSubtask(subtask1Id);
+        expected.add(subtask1);
         Assert.assertEquals(3, taskManager.getHistory().size());
-        taskManager.getEpic(epic1Id);
-        expected.add(epic1);
-        Assert.assertEquals(4, taskManager.getHistory().size());
         taskManager.getSubtask(subtask1Id);
-        expected.add(subtask1);
-        Assert.assertEquals(5, taskManager.getHistory().size());
-        taskManager.getSubtask(subtask1Id);
-        expected.add(subtask1);
-        Assert.assertEquals(6, taskManager.getHistory().size());
+        Assert.assertEquals(3, taskManager.getHistory().size());
         Assert.assertEquals(expected, taskManager.getHistory());
     }
 
@@ -55,7 +52,26 @@ public class InMemoryHistoryManagerTest {
             int taskId = taskManager.addTask(task);
             taskManager.getTask(taskId);
         }
-        Assert.assertEquals(11, taskManager.getTasks().size());
-        Assert.assertEquals(10, taskManager.getHistory().size());
+        Assert.assertEquals(11, taskManager.getHistory().size());
+        taskManager.deleteTasks();
+        Assert.assertEquals(0, taskManager.getHistory().size());
+        Epic epic1 = new Epic("Эпик 1", "Описание э. 1", null);
+        int epic1Id = taskManager.addEpic(epic1);
+        Subtask subtask1 = new Subtask(epic1Id, "Подзадача 1", "Описание п. 1");
+        int subtask1Id = taskManager.addSubtask(subtask1);
+        Subtask subtask2 = new Subtask(epic1Id, "Подзадача 2", "Описание п. 2");
+        int subtask2Id = taskManager.addSubtask(subtask2);
+        taskManager.getEpic(epic1Id);
+        taskManager.getSubtask(subtask1Id);
+        taskManager.getSubtask(subtask2Id);
+        List<Task> expected = new ArrayList<>(List.of(taskManager.getEpic(epic1Id),
+                                                      taskManager.getSubtask(subtask1Id),
+                                                      taskManager.getSubtask(subtask2Id)));
+        Assert.assertEquals(3, taskManager.getHistory().size());
+        Assert.assertEquals(expected, taskManager.getHistory());
+        taskManager.deleteSubtask(subtask2Id);
+        expected.remove(expected.size() - 1);
+        Assert.assertEquals(2, taskManager.getHistory().size());
+        Assert.assertEquals(expected, taskManager.getHistory());
     }
 }
