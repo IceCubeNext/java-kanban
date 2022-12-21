@@ -15,6 +15,14 @@ public class InMemoryHistoryManager implements HistoryManager {
             this.prev = null;
             this.task = task;
         }
+
+        @Override
+        public  String toString() {
+            return "Node{" +
+                   "Task='" + this.task + '\'' +
+                    "next='" + this.next + '\'' +
+                    "prev='" + this.prev + "'}";
+        }
     }
 
     private final HashMap<Integer, Node> nodeMap = new HashMap<>();
@@ -42,7 +50,6 @@ public class InMemoryHistoryManager implements HistoryManager {
         return tasks;
     }
 
-
     @Override
     public void add(Task task) {
         if (nodeMap.containsKey(task.getId())) {
@@ -60,8 +67,10 @@ public class InMemoryHistoryManager implements HistoryManager {
                 tail = null;
             } else if (node == head) {
                 head = node.next;
+                head.prev = null;
             } else if (node == tail) {
                 tail = node.prev;
+                tail.next = null;
             } else {
                 Node prevNode = node.prev;
                 Node nextNode = node.next;
