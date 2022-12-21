@@ -8,7 +8,7 @@ import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
     private int currentId;
-    private HistoryManager historyManager = Manager.getDefaultHistory();
+    private final HistoryManager historyManager = Manager.getDefaultHistory();
     private final HashMap<Integer, Task> tasksMap = new HashMap<>();
     private final HashMap<Integer, Epic> epicsMap = new HashMap<>();
     private final HashMap<Integer, Subtask> subtasksMap = new HashMap<>();
@@ -161,18 +161,30 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     public boolean deleteTasks() {
+        for (int id : tasksMap.keySet()) {
+            historyManager.remove(id);
+        }
         tasksMap.clear();
         return true;
     }
 
     public boolean deleteEpics() {
+        for (int id : epicsMap.keySet()) {
+            historyManager.remove(id);
+        }
         epicsMap.clear();
         epicsSubtasksMap.clear();
+        for (int id : subtasksMap.keySet()) {
+            historyManager.remove(id);
+        }
         subtasksMap.clear();
         return true;
     }
 
     public boolean deleteSubtasks() {
+        for (int id : subtasksMap.keySet()) {
+            historyManager.remove(id);
+        }
         subtasksMap.clear();
         for (Epic epic : epicsMap.values()) {
             epic.getSubtasks().clear();
@@ -183,6 +195,7 @@ public class InMemoryTaskManager implements TaskManager {
     public boolean deleteTask(int id) {
         if (tasksMap.containsKey(id)) {
             tasksMap.remove(id);
+            historyManager.remove(id);
             return true;
         } else {
             return false;
@@ -194,9 +207,11 @@ public class InMemoryTaskManager implements TaskManager {
             Epic epic = epicsMap.get(id);
             for (Subtask subtask : epic.getSubtasks()) {
                 subtasksMap.remove(subtask.getId());
+                historyManager.remove(subtask.getId());
             }
             epicsMap.remove(id);
             epicsSubtasksMap.remove(id);
+            historyManager.remove(id);
             return true;
         } else {
             return false;
@@ -221,6 +236,7 @@ public class InMemoryTaskManager implements TaskManager {
                 System.out.println("подзадача ссылалась на несуществующий Эпик id=" + epicId);
             }
             subtasksMap.remove(id);
+            historyManager.remove(id);
             return true;
         } else {
             return false;
