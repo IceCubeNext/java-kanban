@@ -5,50 +5,9 @@ import main.ru.icecubenext.kanban.model.Task;
 import java.util.*;
 
 public class InMemoryHistoryManager implements HistoryManager {
-    private class Node {
-        Node next;
-        Node prev;
-        Task task;
-
-        public Node(Task task) {
-            this.next = null;
-            this.prev = null;
-            this.task = task;
-        }
-
-        @Override
-        public  String toString() {
-            return "Node{" +
-                   "Task='" + this.task + '\'' +
-                    "next='" + this.next + '\'' +
-                    "prev='" + this.prev + "'}";
-        }
-    }
-
     private final HashMap<Integer, Node> nodeMap = new HashMap<>();
     private Node head = null;
     private Node tail = null;
-
-    private Node linkLast(Task task) {
-        Node newNode = new Node(task);
-        Node oldTail = tail;
-        tail = newNode;
-        if (oldTail == null) {
-            head = newNode;
-        } else {
-            oldTail.next = newNode;
-            tail.prev = oldTail;
-        }
-        return newNode;
-    }
-
-    private List<Task> getTasks() {
-        List<Task> tasks = new ArrayList<>();
-        for (Node node = head; node != null; node = node.next) {
-            tasks.add(node.task);
-        }
-        return tasks;
-    }
 
     @Override
     public void add(Task task) {
@@ -83,5 +42,48 @@ public class InMemoryHistoryManager implements HistoryManager {
     @Override
     public List<Task> getHistory() {
         return getTasks();
+    }
+
+    private static class Node {
+        Node next;
+        Node prev;
+        Task task;
+
+        public Node(Task task) {
+            this.next = null;
+            this.prev = null;
+            this.task = task;
+        }
+
+        @Override
+        public  String toString() {
+            return "Node{" +
+                    "Task='" + this.task + '\'' +
+                    "next='" + this.next + '\'' +
+                    "prev='" + this.prev + "'}";
+        }
+    }
+
+    private Node linkLast(Task task) {
+        Node newNode = new Node(task);
+        Node oldTail = tail;
+        tail = newNode;
+        if (oldTail == null) {
+            head = newNode;
+        } else {
+            oldTail.next = newNode;
+            tail.prev = oldTail;
+        }
+        return newNode;
+    }
+
+    private List<Task> getTasks() {
+        List<Task> tasks = new ArrayList<>();
+        Node node = head;
+        while (node != null) {
+            tasks.add(node.task);
+            node = node.next;
+        }
+        return tasks;
     }
 }

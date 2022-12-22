@@ -3,6 +3,7 @@ package main.ru.icecubenext.kanban;
 import main.ru.icecubenext.kanban.model.*;
 import main.ru.icecubenext.kanban.managers.Manager;
 import main.ru.icecubenext.kanban.managers.TaskManager;
+import test.ru.icecubenext.kanban.managers.SpeedTester;
 
 public class Main {
     public static void main(String[] args) {
@@ -37,6 +38,9 @@ public class Main {
         System.out.println(taskManager.getHistory());
         taskManager.deleteEpics();
         System.out.println(taskManager.getHistory());
+        SpeedTester speedTester = new SpeedTester();
+        speedTester.checkSpeedOfRealisation();
         System.out.println("Тесты в src/test");
     }
 }
+

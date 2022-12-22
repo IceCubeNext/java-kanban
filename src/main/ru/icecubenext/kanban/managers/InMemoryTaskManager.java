@@ -269,7 +269,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public String toString() {
-        String result =  "ru.yandex.praktikum.kanban.TaskManager{" +
+        String result =  "TaskManager{" +
                 "currentId='" + this.currentId;
         if (this.tasksMap != null) {
             result += ", tasksMap.size='" + this.tasksMap.size();
