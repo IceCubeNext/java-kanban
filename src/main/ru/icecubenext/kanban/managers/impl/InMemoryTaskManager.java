@@ -1,5 +1,8 @@
-package main.ru.icecubenext.kanban.managers;
+package main.ru.icecubenext.kanban.managers.impl;
 
+import main.ru.icecubenext.kanban.managers.HistoryManager;
+import main.ru.icecubenext.kanban.managers.Manager;
+import main.ru.icecubenext.kanban.managers.TaskManager;
 import main.ru.icecubenext.kanban.model.Epic;
 import main.ru.icecubenext.kanban.model.Subtask;
 import main.ru.icecubenext.kanban.model.Task;

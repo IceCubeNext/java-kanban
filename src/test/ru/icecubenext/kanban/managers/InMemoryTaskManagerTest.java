@@ -1,7 +1,9 @@
 package test.ru.icecubenext.kanban.managers;
 
+import main.ru.icecubenext.kanban.managers.Manager;
 import main.ru.icecubenext.kanban.model.*;
 import main.ru.icecubenext.kanban.managers.*;
+import main.ru.icecubenext.kanban.model.enums.Status;
 import org.junit.Assert;
 import java.util.ArrayList;
 import java.util.List;

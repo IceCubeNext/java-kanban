@@ -1,5 +1,6 @@
-package main.ru.icecubenext.kanban.managers;
+package main.ru.icecubenext.kanban.managers.impl;
 
+import main.ru.icecubenext.kanban.managers.HistoryManager;
 import main.ru.icecubenext.kanban.model.Task;
 
 import java.util.*;

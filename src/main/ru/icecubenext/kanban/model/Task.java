@@ -1,5 +1,7 @@
 package main.ru.icecubenext.kanban.model;
 
+import main.ru.icecubenext.kanban.model.enums.Status;
+
 import java.util.Objects;
 
 public class Task {
