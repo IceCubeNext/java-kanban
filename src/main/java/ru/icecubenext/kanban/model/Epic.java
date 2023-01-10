@@ -1,6 +1,7 @@
 package ru.icecubenext.kanban.model;
 
 import ru.icecubenext.kanban.model.enums.Status;
+import ru.icecubenext.kanban.model.enums.TaskType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -82,4 +83,5 @@ public class Epic extends Task {
         }
         return result + '}';
     }
+
 }

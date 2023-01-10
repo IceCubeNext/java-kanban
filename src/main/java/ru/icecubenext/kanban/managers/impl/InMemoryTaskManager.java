@@ -24,10 +24,12 @@ public class InMemoryTaskManager implements TaskManager {
 
     public int addTask(Task task) {
         if (!tasksMap.containsValue(task)) {
-            int id = getNewId();
-            task.setId(id);
-            tasksMap.put(id, task);
-            return id;
+            if (task.getId() == 0) {
+                int id = getNewId();
+                task.setId(id);
+            }
+            tasksMap.put(task.getId(), task);
+            return task.getId();
         } else {
             log.debug("Ошибка! Добавляемая задача уже существует");
             return -1;
@@ -36,12 +38,14 @@ public class InMemoryTaskManager implements TaskManager {
 
     public int addEpic(Epic epic) {
         if (!epicsMap.containsValue(epic)) {
-            int id = getNewId();
-            epic.setId(id);
+            if (epic.getId() == 0) {
+                int id = getNewId();
+                epic.setId(id);
+            }
             List<Subtask> epicsSubtasks = epic.getSubtasks();
-            epicsMap.put(id, epic);
-            epicsSubtasksMap.put(id, epicsSubtasks);
-            return id;
+            epicsMap.put(epic.getId(), epic);
+            epicsSubtasksMap.put(epic.getId(), epicsSubtasks);
+            return epic.getId();
         } else {
             log.debug("Ошибка! Добавляемый эпик уже существует");
             return -1;
@@ -56,11 +60,13 @@ public class InMemoryTaskManager implements TaskManager {
         }
         int epicId = subtask.getEpicsId();
         if (epicsMap.containsKey(epicId)) {
-            int id = getNewId();
-            subtask.setId(id);
-            subtasksMap.put(id, subtask);
+            if (subtask.getId() == 0) {
+                int id = getNewId();
+                subtask.setId(id);
+            }
+            subtasksMap.put(subtask.getId(), subtask);
             epicsSubtasksMap.get(epicId).add(subtask);
-            return id;
+            return subtask.getId();
         } else {
             log.debug("Для добавляемой подзадачи не существует Эпика");
             return -1;
@@ -81,7 +87,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     public Task getTask(int id) {
         if (tasksMap.containsKey(id)) {
-            historyManager.add(tasksMap.get(id));
+            addToHistory(tasksMap.get(id));
             return tasksMap.get(id);
         } else {
             log.debug("Ошибка! Не найдена задача с id=" + id);
@@ -91,7 +97,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     public Epic getEpic(int id) {
         if (epicsMap.containsKey(id)) {
-            historyManager.add(epicsMap.get(id));
+            addToHistory(epicsMap.get(id));
             return epicsMap.get(id);
         } else {
             log.debug("Ошибка! Не найден Эпик с id=" + id);
@@ -101,7 +107,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     public Subtask getSubtask(int id) {
         if (subtasksMap.containsKey(id)) {
-            historyManager.add(subtasksMap.get(id));
+            addToHistory(subtasksMap.get(id));
             return subtasksMap.get(id);
         } else {
             log.debug("Ошибка! Не найдена подзадача с id=" + id);
@@ -166,7 +172,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     public boolean deleteTasks() {
         for (int id : tasksMap.keySet()) {
-            historyManager.remove(id);
+            removeFromHistory(id);
         }
         tasksMap.clear();
         return true;
@@ -174,12 +180,12 @@ public class InMemoryTaskManager implements TaskManager {
 
     public boolean deleteEpics() {
         for (int id : epicsMap.keySet()) {
-            historyManager.remove(id);
+            removeFromHistory(id);
         }
         epicsMap.clear();
         epicsSubtasksMap.clear();
         for (int id : subtasksMap.keySet()) {
-            historyManager.remove(id);
+            removeFromHistory(id);
         }
         subtasksMap.clear();
         return true;
@@ -187,7 +193,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     public boolean deleteSubtasks() {
         for (int id : subtasksMap.keySet()) {
-            historyManager.remove(id);
+            removeFromHistory(id);
         }
         subtasksMap.clear();
         for (Epic epic : epicsMap.values()) {
@@ -199,7 +205,7 @@ public class InMemoryTaskManager implements TaskManager {
     public boolean deleteTask(int id) {
         if (tasksMap.containsKey(id)) {
             tasksMap.remove(id);
-            historyManager.remove(id);
+            removeFromHistory(id);
             return true;
         } else {
             return false;
@@ -211,11 +217,11 @@ public class InMemoryTaskManager implements TaskManager {
             Epic epic = epicsMap.get(id);
             for (Subtask subtask : epic.getSubtasks()) {
                 subtasksMap.remove(subtask.getId());
-                historyManager.remove(subtask.getId());
+                removeFromHistory(subtask.getId());
             }
             epicsMap.remove(id);
             epicsSubtasksMap.remove(id);
-            historyManager.remove(id);
+            removeFromHistory(id);
             return true;
         } else {
             return false;
@@ -240,7 +246,7 @@ public class InMemoryTaskManager implements TaskManager {
                 log.debug("подзадача ссылалась на несуществующий Эпик id=" + epicId);
             }
             subtasksMap.remove(id);
-            historyManager.remove(id);
+            removeFromHistory(id);
             return true;
         } else {
             return false;
@@ -289,6 +295,18 @@ public class InMemoryTaskManager implements TaskManager {
             result += ", subtasksMap.size=null";
         }
         return result + '}';
+    }
+
+    protected void addToHistory(Task task) {
+        historyManager.add(task);
+    }
+
+    protected void removeFromHistory(int id) {
+        historyManager.remove(id);
+    }
+
+    protected void setCurrentId(int id) {
+        this.currentId = id;
     }
 
     private int getNewId() {

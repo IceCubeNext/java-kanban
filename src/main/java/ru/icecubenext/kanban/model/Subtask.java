@@ -3,7 +3,7 @@ package ru.icecubenext.kanban.model;
 import java.util.Objects;
 
 public class Subtask extends Task {
-    private final int epicsId;
+    private int epicsId;
 
     public Subtask(int id, int epicsId, String name, String description) {
         super(id, name, description);
@@ -17,6 +17,10 @@ public class Subtask extends Task {
 
     public int getEpicsId() {
         return epicsId;
+    }
+
+    public void setEpicsId(int epicsId) {
+        this.epicsId = epicsId;
     }
 
     @Override
