@@ -5,6 +5,8 @@ import ru.icecubenext.kanban.managers.impl.FileBackedTasksManager;
 import ru.icecubenext.kanban.model.*;
 import ru.icecubenext.kanban.managers.TaskManager;
 
+import java.nio.file.Path;
+
 public class Main {
     public static void main(String[] args) throws ManagerSaveException {
         TaskManager taskManager = new FileBackedTasksManager();
@@ -17,9 +19,9 @@ public class Main {
         Subtask subtask1 = new Subtask(epic2Id, "Подзадача 1", "Описание п. 1");
         Subtask subtask2 = new Subtask(epic2Id, "Подзадача 2", "Описание п. 2");
         int task1Id = taskManager.addTask(task1);
-        int task2Id = taskManager.addTask(task2);
+        taskManager.addTask(task2);
         int subtask1Id = taskManager.addSubtask(subtask1);
-        int subtask2Id = taskManager.addSubtask(subtask2);
+        taskManager.addSubtask(subtask2);
         taskManager.getEpic(epic1Id);
         taskManager.getTask(task1Id);
         taskManager.getSubtask(subtask1Id);
@@ -27,9 +29,9 @@ public class Main {
         System.out.println(taskManager.getEpics());
         System.out.println(taskManager.getSubtasks());
         System.out.println(taskManager.getHistory());
-
+        System.out.println();
         String HOME = System.getProperty("user.home");
-        TaskManager taskManager2 = new FileBackedTasksManager(HOME + "\\kanban.csv");
+        TaskManager taskManager2 = FileBackedTasksManager.loadFromFile(Path.of(HOME + "\\kanban.csv"));
         System.out.println(taskManager2.getTasks());
         System.out.println(taskManager2.getEpics());
         System.out.println(taskManager2.getSubtasks());

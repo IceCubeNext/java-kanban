@@ -1,6 +1,6 @@
 package ru.icecubenext.kanban.managers.exceptions;
 
-public class ManagerSaveException extends Exception {
+public class ManagerSaveException extends RuntimeException {
     public ManagerSaveException() {}
 
     public ManagerSaveException(final String message) {

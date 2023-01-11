@@ -11,8 +11,7 @@ public class InMemoryHistoryManagerTest {
 
     @Test
     public void add() {
-        Manager manager = new Manager();
-        TaskManager taskManager = manager.getDefault();
+        TaskManager taskManager = Manager.getDefault();
         Assert.assertEquals(0, taskManager.getTasks().size());
         Task task1 = new Task("Задача 1", "Описание з. 1");
         Epic epic1 = new Epic("Эпик 1", "Описание э. 1", null);
@@ -43,8 +42,7 @@ public class InMemoryHistoryManagerTest {
 
     @Test
     public void getHistory() {
-        Manager manager = new Manager();
-        TaskManager taskManager = manager.getDefault();
+        TaskManager taskManager = Manager.getDefault();
         for (int i = 0; i < 11; i++) {
             Task task = new Task("Задача " + i, "Описание з. 1");
             int taskId = taskManager.addTask(task);

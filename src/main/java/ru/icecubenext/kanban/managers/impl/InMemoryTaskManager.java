@@ -11,8 +11,8 @@ import ru.icecubenext.kanban.model.Task;
 import java.util.*;
 @Log4j
 public class InMemoryTaskManager implements TaskManager {
+    protected final HistoryManager historyManager = Manager.getDefaultHistory();
     private int currentId;
-    private final HistoryManager historyManager = Manager.getDefaultHistory();
     private final HashMap<Integer, Task> tasksMap = new HashMap<>();
     private final HashMap<Integer, Epic> epicsMap = new HashMap<>();
     private final HashMap<Integer, Subtask> subtasksMap = new HashMap<>();
@@ -275,25 +275,10 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public String toString() {
-        String result =  "TaskManager{" +
-                "currentId='" + this.currentId;
-        if (this.tasksMap != null) {
-            result += ", tasksMap.size='" + this.tasksMap.size();
-        } else {
-            result += ", tasksMap.size=null";
-        }
-
-        if (this.epicsMap != null) {
-            result += ", epicsMap.size='" + this.epicsMap.size();
-        } else {
-            result += ", epicsMap.size=null";
-        }
-
-        if (this.subtasksMap != null) {
-            result += ", subtasksMap.size='" + this.subtasksMap.size();
-        } else {
-            result += ", subtasksMap.size=null";
-        }
+        String result =  "TaskManager{" + "currentId='" + this.currentId;
+        result += ", tasksMap.size='" + this.tasksMap.size();
+        result += ", epicsMap.size='" + this.epicsMap.size();
+        result += ", subtasksMap.size='" + this.subtasksMap.size();
         return result + '}';
     }
 
