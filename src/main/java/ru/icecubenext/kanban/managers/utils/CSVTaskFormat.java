@@ -11,6 +11,8 @@ import ru.icecubenext.kanban.model.enums.TaskType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Log4j
 public class CSVTaskFormat {
@@ -83,8 +85,12 @@ public class CSVTaskFormat {
 
     public static List<Integer> historyFromString(String value) {
         List<Integer> historyId = new ArrayList<>();
-        for (String id : value.split(",")) {
-            historyId.add(Integer.valueOf(id));
+        Pattern pattern = Pattern.compile("([\\d,])+");
+        Matcher matcher = pattern.matcher(value);
+        if (matcher.matches()) {
+            for (String id : value.split(",")) {
+                historyId.add(Integer.valueOf(id));
+            }
         }
         return historyId;
     }

@@ -9,6 +9,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,12 +42,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             }
 
             HashMap<Integer, Task> historyMap = new HashMap<>();
-            Pattern pattern = Pattern.compile("([\\d,])+");
-            Matcher matcher = pattern.matcher(tasks[tasks.length - 1]);
-            if (matcher.matches()) {
-                for (String s : tasks[tasks.length - 1].split(",")) {
-                    historyMap.put(Integer.valueOf(s), null);
-                }
+            List<Integer> history = CSVTaskFormat.historyFromString(tasks[tasks.length - 1]);
+            for (Integer id : history) {
+                historyMap.put(id, null);
             }
             for (int i = 1; i < tasks.length - 2; i++){
                 Task task = CSVTaskFormat.fromString(tasks[i]);
@@ -71,8 +69,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                         break;
                 }
             }
-            if (matcher.matches()) {
-                for (Integer id : CSVTaskFormat.historyFromString(tasks[tasks.length - 1])) {
+            if (history.size() > 0) {
+                for (Integer id : history) {
                     if (historyMap.get(id) != null) {
                         taskManager.addToHistory(historyMap.get(id));
                     }
