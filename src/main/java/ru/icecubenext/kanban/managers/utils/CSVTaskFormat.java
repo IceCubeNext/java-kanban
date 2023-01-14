@@ -10,6 +10,7 @@ import ru.icecubenext.kanban.model.enums.TaskType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringJoiner;
 
 @Log4j
 public class CSVTaskFormat {
@@ -50,25 +51,26 @@ public class CSVTaskFormat {
 
     public static String toString(Task task) {
         if (task == null) return "";
-        String result = task.getId() + ",";
-        switch (task.getClass().getSimpleName()) {
-            case "Task":
-                result += TaskType.TASK + ",";
+        StringJoiner joiner = new StringJoiner(",");
+        joiner.add(String.valueOf(task.getId()));
+        switch (task.getType()) {
+            case TASK:
+                joiner.add(TaskType.TASK.toString());
                 break;
-            case "Epic":
-                result += TaskType.EPIC + ",";
+            case EPIC:
+                joiner.add(TaskType.EPIC.toString());
                 break;
-            case "Subtask":
-                result += TaskType.SUBTASK + ",";
+            case SUBTASK:
+                joiner.add(TaskType.SUBTASK.toString());
                 break;
             default:
                 return "";
         }
-        result += task.getName() + "," + task.getStatus() + "," + task.getDescription();
+        joiner.add(task.getName()).add(task.getStatus().toString()).add(task.getDescription());
         if (task.getClass().getSimpleName().equals("Subtask")) {
-            result += "," + ((Subtask) task).getEpicsId();
+            joiner.add(String.valueOf(((Subtask) task).getEpicsId()));
         }
-        return result;
+        return joiner.toString();
     }
 
     public static String historyToString(HistoryManager manager) {
@@ -76,7 +78,7 @@ public class CSVTaskFormat {
         for (Task task : manager.getHistory()) {
             historyId.add(String.valueOf(task.getId()));
         }
-        return String.join(",", historyId);
+        return historyId.size() == 0 ? " " : String.join(",", historyId);
     }
 
     public static List<Integer> historyFromString(String value) {

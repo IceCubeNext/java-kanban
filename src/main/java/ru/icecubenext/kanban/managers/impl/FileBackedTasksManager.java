@@ -7,43 +7,47 @@ import ru.icecubenext.kanban.model.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Log4j
 public class FileBackedTasksManager extends InMemoryTaskManager {
-    private final Path managerDataFile;
+    private final File managerDataFile;
     public FileBackedTasksManager() {
-        this.managerDataFile = Paths.get(System.getProperty("user.home"), "kanban.csv");
+        this.managerDataFile = Paths.get(System.getProperty("user.home"), "kanban.csv").toFile();
     }
 
-    public FileBackedTasksManager(Path path) {
-        String fileName = path.getFileName().toString();
-        int index = fileName.lastIndexOf('.');
-        if (index > 0 && fileName.substring(index + 1).equals("csv")) {
-            this.managerDataFile = path;
+    public FileBackedTasksManager(File file) {
+        Pattern pattern = Pattern.compile("(.+(\\.(?i)(csv))$)");
+        Matcher matcher = pattern.matcher(file.toString());
+        if (matcher.matches()) {
+            this.managerDataFile = file;
         } else {
             throw new RuntimeException("Поддерживается работа только с файлами csv!");
         }
     }
 
-    public static FileBackedTasksManager loadFromFile(Path path) {
-        final FileBackedTasksManager taskManager = new FileBackedTasksManager(path);
+    public static FileBackedTasksManager loadFromFile(File file) {
+        final FileBackedTasksManager taskManager = new FileBackedTasksManager(file);
         try {
             int maxId = 0;
-            String content = Files.readString(taskManager.managerDataFile);
-            String[] tasks = content.split("\n");
+            String content = Files.readString(taskManager.managerDataFile.toPath(), StandardCharsets.UTF_8);
+            String[] tasks = content.split("\\r?\\n");
             if (tasks.length < 3) {
                 log.error("Нарушена целостность файла. Невозможно загрузить данные.");
                 throw new RuntimeException("Нарушена целостность файла. Невозможно загрузить данные.");
             }
 
             HashMap<Integer, Task> historyMap = new HashMap<>();
-            for (String s : tasks[tasks.length - 1].split(",")) {
-                historyMap.put(Integer.valueOf(s), null);
+            Pattern pattern = Pattern.compile("([\\d,])+");
+            Matcher matcher = pattern.matcher(tasks[tasks.length - 1]);
+            if (matcher.matches()) {
+                for (String s : tasks[tasks.length - 1].split(",")) {
+                    historyMap.put(Integer.valueOf(s), null);
+                }
             }
-
             for (int i = 1; i < tasks.length - 2; i++){
                 Task task = CSVTaskFormat.fromString(tasks[i]);
                 if (task == null) continue;
@@ -53,27 +57,27 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 if (historyMap.containsKey(task.getId())) {
                     historyMap.put(task.getId(), task);
                 }
-                switch (task.getClass().getSimpleName()) {
-                    case "Task":
+                switch (task.getType()) {
+                    case TASK:
                         taskManager.addTask(task);
                         break;
-                    case "Epic":
+                    case EPIC:
                         Epic epic = (Epic) task;
                         taskManager.addEpic(epic);
                         break;
-                    case "Subtask":
+                    case SUBTASK:
                         Subtask subtask = (Subtask) task;
                         taskManager.addSubtask(subtask);
                         break;
                 }
             }
-
-            for (Integer id : CSVTaskFormat.historyFromString(tasks[tasks.length - 1])) {
-                if (historyMap.get(id) != null) {
-                    taskManager.addToHistory(historyMap.get(id));
+            if (matcher.matches()) {
+                for (Integer id : CSVTaskFormat.historyFromString(tasks[tasks.length - 1])) {
+                    if (historyMap.get(id) != null) {
+                        taskManager.addToHistory(historyMap.get(id));
+                    }
                 }
             }
-
             taskManager.setCurrentId(maxId + 1);
         } catch (IOException e) {
             log.error("Ошибка при чтении файла! " + e);
@@ -217,18 +221,22 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     private void save() {
-        try (Writer fileWriter = new FileWriter(managerDataFile.toFile(), StandardCharsets.UTF_8)) {
-            fileWriter.write("id,type,name,status,description,epic\n");
+        try (BufferedWriter fileWriter = new BufferedWriter(new FileWriter(managerDataFile, StandardCharsets.UTF_8))) {
+            fileWriter.write("id,type,name,status,description,epic");
+            fileWriter.newLine();
             for (Task task : getTasks()) {
-                fileWriter.write(CSVTaskFormat.toString(task) + "\n");
+                fileWriter.write(CSVTaskFormat.toString(task));
+                fileWriter.newLine();
             }
             for (Epic epic : getEpics()) {
-                fileWriter.write(CSVTaskFormat.toString(epic) + "\n");
+                fileWriter.write(CSVTaskFormat.toString(epic));
+                fileWriter.newLine();
                 for (Subtask subtask : getEpicsSubtasks(epic.getId())){
-                    fileWriter.write(CSVTaskFormat.toString(subtask) + "\n");
+                    fileWriter.write(CSVTaskFormat.toString(subtask));
+                    fileWriter.newLine();
                 }
             }
-            fileWriter.write("\n");
+            fileWriter.newLine();
             fileWriter.write(CSVTaskFormat.historyToString(historyManager));
         } catch (IOException e) {
             log.error("Ошибка сохранения! " + e);

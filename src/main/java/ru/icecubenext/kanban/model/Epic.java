@@ -15,6 +15,7 @@ public class Epic extends Task {
         if (subtasks != null) {
             this.subtasks = subtasks;
         }
+        this.type = TaskType.EPIC;
     }
 
     public Epic(String name, String description, List<Subtask> subtasks) {
@@ -22,6 +23,7 @@ public class Epic extends Task {
         if (subtasks != null) {
             this.subtasks = subtasks;
         }
+        this.type = TaskType.EPIC;
     }
 
     public List<Subtask> getSubtasks() {

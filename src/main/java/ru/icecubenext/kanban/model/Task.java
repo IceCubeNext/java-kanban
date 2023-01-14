@@ -1,6 +1,7 @@
 package ru.icecubenext.kanban.model;
 
 import ru.icecubenext.kanban.model.enums.Status;
+import ru.icecubenext.kanban.model.enums.TaskType;
 
 import java.util.Objects;
 
@@ -9,6 +10,7 @@ public class Task {
     private String name;
     private String description;
     private Status status = Status.NEW;
+    protected TaskType type = TaskType.TASK;
 
     public Task(int id, String name, String description) {
         this.id = id;
@@ -52,6 +54,9 @@ public class Task {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+    public TaskType getType() {
+        return type;
     }
 
     @Override

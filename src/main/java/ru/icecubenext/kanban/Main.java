@@ -4,8 +4,8 @@ import ru.icecubenext.kanban.managers.exceptions.ManagerSaveException;
 import ru.icecubenext.kanban.managers.impl.FileBackedTasksManager;
 import ru.icecubenext.kanban.model.*;
 import ru.icecubenext.kanban.managers.TaskManager;
+import java.io.File;
 
-import java.nio.file.Path;
 
 public class Main {
     public static void main(String[] args) throws ManagerSaveException {
@@ -31,7 +31,7 @@ public class Main {
         System.out.println(taskManager.getHistory());
         System.out.println();
         String HOME = System.getProperty("user.home");
-        TaskManager taskManager2 = FileBackedTasksManager.loadFromFile(Path.of(HOME + "\\kanban.csv"));
+        TaskManager taskManager2 = FileBackedTasksManager.loadFromFile(new File(HOME + "\\kanban.csv"));
         System.out.println(taskManager2.getTasks());
         System.out.println(taskManager2.getEpics());
         System.out.println(taskManager2.getSubtasks());
