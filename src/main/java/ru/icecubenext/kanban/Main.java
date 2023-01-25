@@ -1,7 +1,7 @@
 package ru.icecubenext.kanban;
 
 import ru.icecubenext.kanban.managers.exceptions.ManagerSaveException;
-import ru.icecubenext.kanban.managers.impl.FileBackedTasksManager;
+import ru.icecubenext.kanban.managers.impl.FileBackedTaskManager;
 import ru.icecubenext.kanban.model.*;
 import ru.icecubenext.kanban.managers.TaskManager;
 import java.io.File;
@@ -9,7 +9,7 @@ import java.io.File;
 
 public class Main {
     public static void main(String[] args) throws ManagerSaveException {
-        TaskManager taskManager = new FileBackedTasksManager();
+        TaskManager taskManager = new FileBackedTaskManager();
         Task task1 = new Task("Задача 1", "Описание з. 1");
         Task task2 = new Task("Задача 2", "Описание з. 2");
         Epic epic1 = new Epic("Эпик1", "Описание э. 1", null);
@@ -31,7 +31,7 @@ public class Main {
         System.out.println(taskManager.getHistory());
         System.out.println();
         String HOME = System.getProperty("user.home");
-        TaskManager taskManager2 = FileBackedTasksManager.loadFromFile(new File(HOME + "\\kanban.csv"));
+        TaskManager taskManager2 = FileBackedTaskManager.loadFromFile(new File(HOME + "\\kanban.csv"));
         System.out.println(taskManager2.getTasks());
         System.out.println(taskManager2.getEpics());
         System.out.println(taskManager2.getSubtasks());

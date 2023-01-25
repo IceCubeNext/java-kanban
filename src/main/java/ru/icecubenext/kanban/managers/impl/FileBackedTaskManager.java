@@ -14,13 +14,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Log4j
-public class FileBackedTasksManager extends InMemoryTaskManager {
+public class FileBackedTaskManager extends InMemoryTaskManager {
     private final File managerDataFile;
-    public FileBackedTasksManager() {
+    public FileBackedTaskManager() {
         this.managerDataFile = Paths.get(System.getProperty("user.home"), "kanban.csv").toFile();
     }
 
-    public FileBackedTasksManager(File file) {
+    public FileBackedTaskManager(File file) {
         Pattern pattern = Pattern.compile("(.+(\\.(?i)(csv))$)");
         Matcher matcher = pattern.matcher(file.toString());
         if (matcher.matches()) {
@@ -30,8 +30,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
     }
 
-    public static FileBackedTasksManager loadFromFile(File file) {
-        final FileBackedTasksManager taskManager = new FileBackedTasksManager(file);
+    public static FileBackedTaskManager loadFromFile(File file) {
+        final FileBackedTaskManager taskManager = new FileBackedTaskManager(file);
         try {
             int maxId = 0;
             String content = Files.readString(taskManager.managerDataFile.toPath(), StandardCharsets.UTF_8);
