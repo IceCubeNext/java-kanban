@@ -3,6 +3,9 @@ package ru.icecubenext.kanban.model;
 import ru.icecubenext.kanban.model.enums.Status;
 import ru.icecubenext.kanban.model.enums.TaskType;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 public class Task {
@@ -10,18 +13,32 @@ public class Task {
     private String name;
     private String description;
     private Status status = Status.NEW;
+    private LocalDateTime startTime;
+    private int duration;
     protected TaskType type = TaskType.TASK;
+
+    public Task(int id, String name, String description, LocalDateTime startTime, int duration) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.startTime = startTime.isBefore(LocalDateTime.now()) ? LocalDateTime.now() : startTime;
+        this.duration = Math.max(duration, 0);
+    }
 
     public Task(int id, String name, String description) {
         this.id = id;
         this.name = name;
         this.description = description;
+        this.startTime = LocalDateTime.now();
+        this.duration = 15;
     }
 
     public Task(String name, String description) {
         this.id = 0;
         this.name = name;
         this.description = description;
+        this.startTime = LocalDateTime.now();
+        this.duration = 15;
     }
 
     public int getId() {
@@ -55,8 +72,29 @@ public class Task {
     public void setStatus(Status status) {
         this.status = status;
     }
+
     public TaskType getType() {
         return type;
+    }
+
+    public LocalDateTime getStartTime() {
+        return this.startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public int getDuration() {
+        return this.duration;
+    }
+
+    public void setDuration(int minutes) {
+       this.duration = Math.max(minutes, 0);
+    }
+
+    public LocalDateTime getEndTime() {
+        return startTime.plus(Duration.ofMinutes(duration));
     }
 
     @Override

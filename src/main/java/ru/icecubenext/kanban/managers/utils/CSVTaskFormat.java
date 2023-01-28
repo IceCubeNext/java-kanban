@@ -8,6 +8,9 @@ import ru.icecubenext.kanban.model.Task;
 import ru.icecubenext.kanban.model.enums.Status;
 import ru.icecubenext.kanban.model.enums.TaskType;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
@@ -16,10 +19,10 @@ import java.util.regex.Pattern;
 
 @Log4j
 public class CSVTaskFormat {
-
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm");
     public static Task fromString(String str) {
         String[] tokens = str.split(",");
-        if (tokens.length < 5 || tokens.length > 6) {
+        if (tokens.length < 7 || tokens.length > 8) {
             log.error("Строка не является CSV записью объекта - наследника класса Task.");
             log.error("> " + str);
             return null;
@@ -29,18 +32,20 @@ public class CSVTaskFormat {
             String name = tokens[2];
             Status status = Status.valueOf(tokens[3]);
             String description = tokens[4];
+            LocalDateTime startTime = LocalDateTime.parse(tokens[5], formatter);
+            int duration = Integer.parseInt(tokens[6]);
             switch (taskType) {
                 case TASK:
-                    Task task = new Task(id, name, description);
+                    Task task = new Task(id, name, description, startTime, duration);
                     task.setStatus(status);
                     return task;
                 case EPIC:
-                    Epic epic = new Epic(id, name, description, null);
+                    Epic epic = new Epic(id, name, description, startTime, duration, null);
                     epic.setStatus(status);
                     return epic;
                 case SUBTASK:
-                    int epicId = Integer.parseInt(tokens[5]);
-                    Subtask subtask = new Subtask(id, epicId, name, description);
+                    int epicId = Integer.parseInt(tokens[7]);
+                    Subtask subtask = new Subtask(id, epicId, name, description, startTime, duration);
                     subtask.setStatus(status);
                     return subtask;
                 default:
@@ -68,7 +73,11 @@ public class CSVTaskFormat {
             default:
                 return "";
         }
-        joiner.add(task.getName()).add(task.getStatus().toString()).add(task.getDescription());
+        joiner.add(task.getName())
+                .add(task.getStatus().toString())
+                .add(task.getDescription())
+                .add(task.getStartTime().format(formatter))
+                .add(String.valueOf(task.getDuration()));
         if (task.getClass().getSimpleName().equals("Subtask")) {
             joiner.add(String.valueOf(((Subtask) task).getEpicsId()));
         }

@@ -2,11 +2,19 @@ package ru.icecubenext.kanban.model;
 
 import ru.icecubenext.kanban.model.enums.TaskType;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Subtask extends Task {
     private int epicsId;
     private final TaskType taskType = TaskType.SUBTASK;
+
+    public Subtask(int id, int epicsId, String name, String description, LocalDateTime startTime, int duration) {
+        super(id, name, description, startTime, duration);
+        this.epicsId = epicsId;
+        this.type = TaskType.SUBTASK;
+    }
 
     public Subtask(int id, int epicsId, String name, String description) {
         super(id, name, description);

@@ -77,7 +77,7 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskMan
 
         fileBackedTaskManager.deleteSubtasks();
         epic1 = fileBackedTaskManager.getEpic(epic1Id);
-        epic2 = fileBackedTaskManager.getEpic(epic1Id);
+        epic2 = fileBackedTaskManager.getEpic(epic2Id);
         assertEquals(List.of(epic1, epic2),fileBackedTaskManager.getHistory());
         assertEquals(new ArrayList<>(), fileBackedTaskManager.getTasks());
         assertEquals(List.of(epic1, epic2), fileBackedTaskManager.getEpics());

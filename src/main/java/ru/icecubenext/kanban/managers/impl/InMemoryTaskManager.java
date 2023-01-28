@@ -17,6 +17,7 @@ public class InMemoryTaskManager implements TaskManager {
     private final HashMap<Integer, Epic> epicsMap = new HashMap<>();
     private final HashMap<Integer, Subtask> subtasksMap = new HashMap<>();
     private final HashMap<Integer, List<Subtask>> epicsSubtasksMap  = new HashMap<>();
+    private final Set<Task> prioritizedTasks = new TreeSet<>();
 
     public InMemoryTaskManager() {
         this.currentId = 0;

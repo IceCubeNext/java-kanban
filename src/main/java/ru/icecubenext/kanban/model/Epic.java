@@ -3,12 +3,22 @@ package ru.icecubenext.kanban.model;
 import ru.icecubenext.kanban.model.enums.Status;
 import ru.icecubenext.kanban.model.enums.TaskType;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public class Epic extends Task {
     private List<Subtask> subtasks = new ArrayList<>();
+
+    public Epic(int id, String name, String description, LocalDateTime startTime, int duration, List<Subtask> subtasks){
+        super(id, name, description, startTime, duration);
+        if (subtasks != null) {
+            this.subtasks = subtasks;
+        }
+        this.type = TaskType.EPIC;
+    }
 
     public Epic(int id, String name, String description, List<Subtask> subtasks) {
         super(id, name, description);
@@ -29,24 +39,39 @@ public class Epic extends Task {
     public List<Subtask> getSubtasks() {
         return subtasks;
     }
+    @Override
+    public LocalDateTime getEndTime() {
+        if (subtasks.size() == 0) {
+            return super.getEndTime();
+        }
+        LocalDateTime epicStartTime = subtasks.get(0).getStartTime();
+        int epicDuration = 0;
+        for (Subtask subtask : subtasks) {
+            if (subtask.getStartTime().isBefore(epicStartTime)) {
+                epicStartTime = subtask.getStartTime();
+            }
+            epicDuration += subtask.getDuration();
+        }
+        return epicStartTime.plus(Duration.ofMinutes(epicDuration));
+    }
 
     @Override
     public Status getStatus() {
-        if (this.subtasks.size() == 0) {
+        if (subtasks.size() == 0) {
             return Status.NEW;
         }
         int doneCount = 0;
         int newCount = 0;
-        for (Subtask subtask : this.subtasks) {
+        for (Subtask subtask : subtasks) {
             if (subtask.getStatus() == Status.DONE) {
                 doneCount++;
             } else if (subtask.getStatus() == Status.NEW) {
                 newCount++;
             }
         }
-        if (doneCount == this.subtasks.size()) {
+        if (doneCount == subtasks.size()) {
             return Status.DONE;
-        } else if (newCount == this.subtasks.size()) {
+        } else if (newCount == subtasks.size()) {
             return Status.NEW;
         } else {
             return Status.IN_PROGRESS;

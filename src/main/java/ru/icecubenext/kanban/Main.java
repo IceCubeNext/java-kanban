@@ -1,5 +1,6 @@
 package ru.icecubenext.kanban;
 
+import ru.icecubenext.kanban.managers.Manager;
 import ru.icecubenext.kanban.managers.exceptions.ManagerSaveException;
 import ru.icecubenext.kanban.managers.impl.FileBackedTaskManager;
 import ru.icecubenext.kanban.model.*;
@@ -9,34 +10,20 @@ import java.io.File;
 
 public class Main {
     public static void main(String[] args) throws ManagerSaveException {
-        TaskManager taskManager = new FileBackedTaskManager();
-        Task task1 = new Task("Задача 1", "Описание з. 1");
-        Task task2 = new Task("Задача 2", "Описание з. 2");
-        Epic epic1 = new Epic("Эпик1", "Описание э. 1", null);
-        Epic epic2 = new Epic("Эпик1.2", "Описание э. 1.2", null);
-        int epic1Id = taskManager.addEpic(epic1);
-        int epic2Id = taskManager.addEpic(epic2);
-        Subtask subtask1 = new Subtask(epic2Id, "Подзадача 1", "Описание п. 1");
-        Subtask subtask2 = new Subtask(epic2Id, "Подзадача 2", "Описание п. 2");
-        int task1Id = taskManager.addTask(task1);
-        taskManager.addTask(task2);
-        int subtask1Id = taskManager.addSubtask(subtask1);
-        taskManager.addSubtask(subtask2);
-        taskManager.getEpic(epic1Id);
-        taskManager.getTask(task1Id);
-        taskManager.getSubtask(subtask1Id);
-        System.out.println(taskManager.getTasks());
-        System.out.println(taskManager.getEpics());
-        System.out.println(taskManager.getSubtasks());
-        System.out.println(taskManager.getHistory());
-        System.out.println();
-        String HOME = System.getProperty("user.home");
-        TaskManager taskManager2 = FileBackedTaskManager.loadFromFile(new File(HOME + "\\kanban.csv"));
-        System.out.println(taskManager2.getTasks());
-        System.out.println(taskManager2.getEpics());
-        System.out.println(taskManager2.getSubtasks());
-        System.out.println(taskManager2.getHistory());
-        System.out.println("next id = " + taskManager2.addTask(new Task("test", "test")));
+        TaskManager taskManager = FileBackedTaskManager.loadFromFile(new File("C:\\Users\\Александр\\kanban.csv"));
+        Task task = new Task("name", "description");
+        int taskId = taskManager.addTask(task);
+        taskManager.getTask(taskId).setDuration(1);
+        System.out.println(taskManager.getTask(taskId).getEndTime());
+        Epic epic = new Epic("ename", "edescription", null);
+        int epic1Id = taskManager.addEpic(epic);
+        Subtask subtask1 = new Subtask(epic1Id, "sname", "sdescription");
+        Subtask subtask2 = new Subtask(epic1Id, "sname", "sdescription");
+        System.out.println(taskManager.getEpic(epic1Id).getEndTime());
+        int subtask1id = taskManager.addSubtask(subtask1);
+        System.out.println(taskManager.getEpic(epic1Id).getEndTime());
+        int subtask2id = taskManager.addSubtask(subtask2);
+        System.out.println(taskManager.getEpic(epic1Id).getEndTime());
     }
 }
 
