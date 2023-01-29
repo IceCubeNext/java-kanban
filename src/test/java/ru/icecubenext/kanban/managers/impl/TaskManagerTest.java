@@ -433,4 +433,9 @@ public abstract class TaskManagerTest <T extends TaskManager> {
         taskManager.getSubtask(subtask2Id).setStatus(Status.NEW);
         assertEquals(Status.NEW, taskManager.getEpic(epic1Id).getStatus());
     }
+
+    @Test
+    public void checkDuration() {
+
+    }
 }
