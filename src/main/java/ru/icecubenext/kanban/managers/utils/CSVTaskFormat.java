@@ -8,7 +8,6 @@ import ru.icecubenext.kanban.model.Task;
 import ru.icecubenext.kanban.model.enums.Status;
 import ru.icecubenext.kanban.model.enums.TaskType;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -32,7 +31,13 @@ public class CSVTaskFormat {
             String name = tokens[2];
             Status status = Status.valueOf(tokens[3]);
             String description = tokens[4];
-            LocalDateTime startTime = LocalDateTime.parse(tokens[5], formatter);
+            LocalDateTime startTime;
+            if (!tokens[5].equals("null")) {
+                startTime = LocalDateTime.parse(tokens[5], formatter);
+            } else {
+                startTime = null;
+            }
+
             int duration = Integer.parseInt(tokens[6]);
             switch (taskType) {
                 case TASK:
@@ -73,10 +78,11 @@ public class CSVTaskFormat {
             default:
                 return "";
         }
+        String startTime = (task.getStartTime() == null) ? "null" : task.getStartTime().format(formatter);
         joiner.add(task.getName())
                 .add(task.getStatus().toString())
                 .add(task.getDescription())
-                .add(task.getStartTime().format(formatter))
+                .add(startTime)
                 .add(String.valueOf(task.getDuration()));
         if (task.getClass().getSimpleName().equals("Subtask")) {
             joiner.add(String.valueOf(((Subtask) task).getEpicsId()));

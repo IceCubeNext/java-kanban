@@ -5,6 +5,7 @@ import ru.icecubenext.kanban.model.enums.TaskType;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -39,20 +40,20 @@ public class Epic extends Task {
     public List<Subtask> getSubtasks() {
         return subtasks;
     }
+
+    @Override
+    public int getDuration() {
+        return  getEpicsTimeData().getDuration();
+    }
+
+    @Override
+    public LocalDateTime getStartTime(){
+        return getEpicsTimeData().getStartTime();
+    }
+
     @Override
     public LocalDateTime getEndTime() {
-        if (subtasks.size() == 0) {
-            return super.getEndTime();
-        }
-        LocalDateTime epicStartTime = subtasks.get(0).getStartTime();
-        int epicDuration = 0;
-        for (Subtask subtask : subtasks) {
-            if (subtask.getStartTime().isBefore(epicStartTime)) {
-                epicStartTime = subtask.getStartTime();
-            }
-            epicDuration += subtask.getDuration();
-        }
-        return epicStartTime.plus(Duration.ofMinutes(epicDuration));
+        return getEpicsTimeData().getEndTime();
     }
 
     @Override
@@ -87,13 +88,15 @@ public class Epic extends Task {
                 && Objects.equals(epic.getName(), this.getName())
                 && Objects.equals(epic.getDescription(), this.getDescription())
                 && Objects.equals(epic.getStatus(), this.getStatus())
+                && Objects.equals(epic.getStartTime(), this.getStartTime())
+                && Objects.equals(epic.getDuration(), this.getDuration())
                 && Objects.equals(epic.getSubtasks(), this.getSubtasks());
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(this.getId(), this.getName(), this.getDescription(),
-                this.getStatus(), this.getSubtasks());
+                this.getStatus(), this.getStartTime(), this.getDuration(), this.getSubtasks());
     }
 
     @Override
@@ -103,6 +106,12 @@ public class Epic extends Task {
                 ", name='" + this.getName() + '\'' +
                 ", description='" + this.getDescription() +'\'' +
                 ", status='" + this.getStatus() + '\'';
+        if (this.getStartTime() != null) {
+            result += ", startTime='" + this.getStartTime().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")) +"'";
+        } else {
+            result += ", startTime='null'";
+        }
+                result += ", duration='" + this.getDuration() + "' min";
         if (this.getSubtasks() != null) {
             result += ", subtasks.size='" + this.getSubtasks().size() + '\'';
         } else {
@@ -111,4 +120,59 @@ public class Epic extends Task {
         return result + '}';
     }
 
+    private static class EpicsTimeData {
+        private Subtask firstSubtask = null;
+        private Subtask lastSubtask = null;
+
+        public LocalDateTime getStartTime() {
+            if(this.firstSubtask == null) {
+                return null;
+            } else {
+                return firstSubtask.getStartTime();
+            }
+        }
+
+        public LocalDateTime getEndTime() {
+            if(this.firstSubtask == null) {
+                return null;
+            } else {
+                return lastSubtask.getEndTime();
+            }
+        }
+
+        public int getDuration() {
+            if(this.firstSubtask == null) {
+                return 0;
+            } else if (this.firstSubtask.equals(lastSubtask)){
+                return firstSubtask.getDuration();
+            } else {
+                return (int) Duration.between(firstSubtask.getStartTime(), lastSubtask.getEndTime()).toMinutes();
+            }
+        }
+    }
+
+    private EpicsTimeData getEpicsTimeData() {
+        if (subtasks.size() == 0) {
+            return new EpicsTimeData();
+        }
+        Subtask firstSubtask = null;
+        Subtask lastSubtask = null;
+
+        for (Subtask subtask : subtasks) {
+            if (subtask.getStartTime() != null) {
+                if (firstSubtask == null) {
+                    firstSubtask = subtask;
+                    lastSubtask = subtask;
+                } else if (subtask.getStartTime().isBefore(firstSubtask.getStartTime())) {
+                    firstSubtask = subtask;
+                } else if (subtask.getStartTime().isAfter(lastSubtask.getStartTime())) {
+                    lastSubtask = subtask;
+                }
+            }
+        }
+        EpicsTimeData timeData = new EpicsTimeData();
+        timeData.firstSubtask = firstSubtask;
+        timeData.lastSubtask = lastSubtask;
+        return timeData;
+    }
 }

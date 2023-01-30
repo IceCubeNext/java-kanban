@@ -2,8 +2,8 @@ package ru.icecubenext.kanban.model;
 
 import ru.icecubenext.kanban.model.enums.TaskType;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 public class Subtask extends Task {
@@ -45,22 +45,31 @@ public class Subtask extends Task {
                 && Objects.equals(this.getName(), subtask.getName())
                 && Objects.equals(this.getDescription(), subtask.getDescription())
                 && Objects.equals(this.getStatus(), subtask.getStatus())
+                && Objects.equals(this.getStartTime(), subtask.getStartTime())
+                && Objects.equals(this.getDuration(), subtask.getDuration())
                 && this.epicsId == subtask.epicsId;
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(this.getId(), this.getName(), this.getDescription(),
-                this.getStatus(), this.getEpicsId());
+                this.getStatus(), this.getStartTime(), this.getDuration(), this.getEpicsId());
     }
 
     @Override
     public String toString() {
-        return "Subtask{" +
+        String result = "Subtask{" +
                 "id='" + this.getId() + '\'' +
                 ", name='" + this.getName() + '\'' +
                 ", description='" + this.getDescription() +'\'' +
-                ", status='" + this.getStatus() + '\'' +
-                ", epicsId='" + this.getEpicsId() + "'}";
+                ", status='" + this.getStatus() + '\'';
+        if (this.getStartTime() != null) {
+            result += ", startTime='" + this.getStartTime().format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")) +"'";
+        } else {
+            result += ", startTime='null'";
+        }
+        result += ", duration='" + this.getDuration() + "' min" +
+        ", epicsId='" + this.getEpicsId() + "'}";
+        return result;
     }
 }

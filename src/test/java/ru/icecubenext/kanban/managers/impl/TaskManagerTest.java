@@ -8,6 +8,8 @@ import ru.icecubenext.kanban.model.Subtask;
 import ru.icecubenext.kanban.model.Task;
 import ru.icecubenext.kanban.model.enums.Status;
 
+import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -436,6 +438,95 @@ public abstract class TaskManagerTest <T extends TaskManager> {
 
     @Test
     public void checkDuration() {
+        Task task1 = new Task("Задача 1", "Описание з. 1");
+        Task task2 = new Task("Задача 2", "Описание з. 2");
+        Task task3 = new Task("Задача 3", "Описание з. 3");
+        int task1Id = taskManager.addTask(task1);
+        int task2Id = taskManager.addTask(task2);
+        int task3Id = taskManager.addTask(task3);
+        assertEquals(List.of(task1, task2, task3), taskManager.getPrioritizedTasks());
 
+        LocalDateTime dateTime1 = LocalDateTime.of(2010, Month.JUNE, 10, 8, 0);
+        LocalDateTime dateTime2 = LocalDateTime.of(2010, Month.JUNE, 10, 8, 30);
+        LocalDateTime dateTime3 = LocalDateTime.of(2010, Month.JUNE, 10, 9, 0);
+        Task updatableTask1 = new Task(task1Id, "Задача 1", "Описание", dateTime1, 0);
+        Task updatableTask2 = new Task(task2Id, "Задача 2", "Описание", dateTime2, 0);
+        Task updatableTask3 = new Task(task3Id, "Задача 3", "Описание", dateTime3, 0);
+        updatableTask1.setDuration(0);
+        updatableTask2.setDuration(0);
+        updatableTask3.setDuration(0);
+        taskManager.updateTask(updatableTask1);
+        taskManager.updateTask(updatableTask2);
+        taskManager.updateTask(updatableTask3);
+        task1 = taskManager.getTask(task1Id);
+        task2 = taskManager.getTask(task2Id);
+        task3 = taskManager.getTask(task3Id);
+        assertEquals(List.of(task1, task2, task3), taskManager.getPrioritizedTasks());
+        updatableTask1.setDuration(1);
+        taskManager.updateTask(updatableTask1);
+        assertEquals(List.of(task1, task2, task3), taskManager.getPrioritizedTasks());
+        updatableTask2.setDuration(1);
+        taskManager.updateTask(updatableTask2);
+        assertEquals(List.of(task1, task2, task3), taskManager.getPrioritizedTasks());
+        updatableTask3.setDuration(10);
+        task3 = taskManager.getTask(task3Id);
+        assertEquals(List.of(task1, task2, task3), taskManager.getPrioritizedTasks());
+
+        Epic epic1 = new Epic("Эпик0", "Описание э. 0", null);
+        int epic1Id = taskManager.addEpic(epic1);
+        Subtask subtask1 = new Subtask(epic1Id, "Подзадача 1", "Описание п. 1");
+        Subtask subtask2 = new Subtask(epic1Id, "Подзадача 2", "Описание п. 2");
+        Subtask subtask3 = new Subtask(epic1Id, "Подзадача 3", "Описание п. 3");
+        int subtask1Id = taskManager.addSubtask(subtask1);
+        int subtask2Id = taskManager.addSubtask(subtask2);
+        int subtask3Id = taskManager.addSubtask(subtask3);
+        assertNull(taskManager.getEpic(epic1Id).getStartTime());
+        Subtask updatableSubtask1 = new Subtask(subtask1Id, epic1Id, "Подзадача 1", "Описание п. 1");
+        Subtask updatableSubtask2 = new Subtask(subtask2Id, epic1Id, "Подзадача 2", "Описание п. 2");
+        Subtask updatableSubtask3 = new Subtask(subtask3Id, epic1Id, "Подзадача 3", "Описание п. 3");
+        LocalDateTime subtask1ld = LocalDateTime.of(2010, Month.JUNE, 10, 10, 0);
+        LocalDateTime subtask2ld = LocalDateTime.of(2010, Month.JUNE, 10, 9, 59);
+        LocalDateTime subtask3ld = LocalDateTime.of(2010, Month.JUNE, 10, 10, 30);
+
+        updatableSubtask1.setStartTime(subtask1ld);
+        updatableSubtask1.setDuration(30);
+        taskManager.updateSubtask(updatableSubtask1);
+        assertEquals(subtask1ld, taskManager.getSubtask(subtask1Id).getStartTime());
+        assertEquals(subtask1ld, taskManager.getEpic(epic1Id).getStartTime());
+        assertEquals(LocalDateTime.of(2010, Month.JUNE, 10, 10, 30), taskManager.getEpic(epic1Id).getEndTime());
+
+        updatableSubtask2.setStartTime(subtask2ld);
+        updatableSubtask2.setDuration(1);
+        taskManager.updateSubtask(updatableSubtask2);
+        assertEquals(subtask2ld, taskManager.getSubtask(subtask2Id).getStartTime());
+        assertEquals(subtask2ld, taskManager.getEpic(epic1Id).getStartTime());
+        assertEquals(31, taskManager.getEpic(epic1Id).getDuration());
+        assertEquals(LocalDateTime.of(2010, Month.JUNE, 10, 10, 30), taskManager.getEpic(epic1Id).getEndTime());
+
+        updatableSubtask3.setStartTime(subtask3ld);
+        updatableSubtask3.setDuration(30);
+        taskManager.updateSubtask(updatableSubtask3);
+        assertEquals(subtask2ld, taskManager.getEpic(epic1Id).getStartTime());
+        assertEquals(LocalDateTime.of(2010, Month.JUNE, 10, 11, 0), taskManager.getEpic(epic1Id).getEndTime());
+        assertEquals(61, taskManager.getEpic(epic1Id).getDuration());
+
+        updatableSubtask3.setStartTime(LocalDateTime.of(2010, Month.JUNE, 10, 10, 29));
+        updatableSubtask3.setDuration(30);
+        taskManager.updateSubtask(updatableSubtask3);
+        assertEquals(subtask2ld, taskManager.getEpic(epic1Id).getStartTime());
+        assertEquals(LocalDateTime.of(2010, Month.JUNE, 10, 10, 59), taskManager.getEpic(epic1Id).getEndTime());
+
+        updatableSubtask3.setStartTime(LocalDateTime.of(2010, Month.JUNE, 10, 11, 0));
+        updatableSubtask3.setDuration(30);
+        taskManager.updateSubtask(updatableSubtask3);
+        assertEquals(subtask2ld, taskManager.getEpic(epic1Id).getStartTime());
+        assertEquals(LocalDateTime.of(2010, Month.JUNE, 10, 11, 30), taskManager.getEpic(epic1Id).getEndTime());
+
+        Subtask subtask4 = new Subtask(epic1Id, "Подзадача 4", "Описание п. 4");
+        subtask4.setStartTime(LocalDateTime.of(2010, Month.JUNE, 10, 12, 59));
+        taskManager.addSubtask(subtask4);
+        assertEquals(LocalDateTime.of(2010, Month.JUNE, 10, 12, 59), taskManager.getEpic(epic1Id).getEndTime());
+        assertEquals(LocalDateTime.of(2010, Month.JUNE, 10, 9, 59), taskManager.getEpic(epic1Id).getStartTime());
+        assertEquals(180, taskManager.getEpic(epic1Id).getDuration());
     }
 }

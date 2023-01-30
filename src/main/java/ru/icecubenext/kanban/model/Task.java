@@ -21,7 +21,7 @@ public class Task {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.startTime = startTime.isBefore(LocalDateTime.now()) ? LocalDateTime.now() : startTime;
+        this.startTime = startTime;
         this.duration = Math.max(duration, 0);
     }
 
@@ -29,16 +29,16 @@ public class Task {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.startTime = LocalDateTime.now();
-        this.duration = 15;
+        this.startTime = null;
+        this.duration = 0;
     }
 
     public Task(String name, String description) {
         this.id = 0;
         this.name = name;
         this.description = description;
-        this.startTime = LocalDateTime.now();
-        this.duration = 15;
+        this.startTime = null;
+        this.duration = 0;
     }
 
     public int getId() {
@@ -94,6 +94,7 @@ public class Task {
     }
 
     public LocalDateTime getEndTime() {
+        if (startTime == null) return null;
         return startTime.plus(Duration.ofMinutes(duration));
     }
 
@@ -105,20 +106,29 @@ public class Task {
         return task.id == this.id
                 && Objects.equals(task.name, this.name)
                 && Objects.equals(task.description, this.description)
-                && Objects.equals(task.status, this.status);
+                && Objects.equals(task.status, this.status)
+                && Objects.equals(task.startTime, this.startTime)
+                && Objects.equals(task.duration, this.duration);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.id, this.name, this.description, this.status);
+        return Objects.hash(this.id, this.name, this.description, this.status, this.startTime, this.duration);
     }
 
     @Override
     public String toString() {
-        return "Task{" +
+        String result =  "Task{" +
                 "id='" + this.id + '\'' +
                 ", name='" + this.name + '\'' +
                 ", description='" + this.description +'\'' +
-                ", status='" + this.status + '\'' + '}';
+                ", status='" + this.status + '\'';
+        if (this.startTime != null) {
+            result += ", startTime='" + this.startTime.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")) +"'";
+        } else {
+            result += ", startTime='null'";
+        }
+        result += ", duration='" + this.duration + "' min}";
+        return result;
     }
 }
