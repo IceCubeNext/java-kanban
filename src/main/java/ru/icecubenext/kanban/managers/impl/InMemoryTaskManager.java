@@ -22,7 +22,7 @@ public class InMemoryTaskManager implements TaskManager {
             Comparator.nullsLast(Comparator.naturalOrder())).thenComparing(Task::getId));
 
     public InMemoryTaskManager() {
-        this.currentId = 0;
+        this.currentId = 1;
     }
 
     public int addTask(Task task) {
@@ -338,6 +338,7 @@ public class InMemoryTaskManager implements TaskManager {
         for (Task item : prioritizedTasks) {
             if (item.getId() == task.getId()) continue;
             if (item.getStartTime() == null) continue;
+            if (item.getStartTime().isEqual(taskStart)) return false;
             if ((taskStart.isAfter(item.getStartTime()) && taskStart.isBefore(item.getEndTime()))
                 || (taskEnd.isAfter(item.getStartTime()) && taskEnd.isBefore(item.getEndTime()))) {
                 return false;

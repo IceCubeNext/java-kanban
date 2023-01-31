@@ -45,7 +45,7 @@ public class CSVTaskFormat {
                     task.setStatus(status);
                     return task;
                 case EPIC:
-                    Epic epic = new Epic(id, name, description, startTime, duration, null);
+                    Epic epic = new Epic(id, name, description, startTime, duration);
                     epic.setStatus(status);
                     return epic;
                 case SUBTASK:

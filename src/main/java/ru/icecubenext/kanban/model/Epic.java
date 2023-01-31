@@ -11,29 +11,20 @@ import java.util.List;
 import java.util.Objects;
 
 public class Epic extends Task {
-    private List<Subtask> subtasks = new ArrayList<>();
+    private final List<Subtask> subtasks = new ArrayList<>();
 
-    public Epic(int id, String name, String description, LocalDateTime startTime, int duration, List<Subtask> subtasks){
+    public Epic(int id, String name, String description, LocalDateTime startTime, int duration){
         super(id, name, description, startTime, duration);
-        if (subtasks != null) {
-            this.subtasks = subtasks;
-        }
         this.type = TaskType.EPIC;
     }
 
-    public Epic(int id, String name, String description, List<Subtask> subtasks) {
+    public Epic(int id, String name, String description) {
         super(id, name, description);
-        if (subtasks != null) {
-            this.subtasks = subtasks;
-        }
         this.type = TaskType.EPIC;
     }
 
-    public Epic(String name, String description, List<Subtask> subtasks) {
+    public Epic(String name, String description) {
         super(name, description);
-        if (subtasks != null) {
-            this.subtasks = subtasks;
-        }
         this.type = TaskType.EPIC;
     }
 
