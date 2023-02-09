@@ -1,4 +1,4 @@
-package ru.icecubenext.kanban.managers.impl;
+package ru.icecubenext.kanban.managers.impl.memory;
 
 import ru.icecubenext.kanban.managers.HistoryManager;
 import ru.icecubenext.kanban.model.Task;

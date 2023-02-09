@@ -128,7 +128,7 @@ public class Task {
         } else {
             result += ", startTime='null'";
         }
-        result += ", duration='" + this.duration + "' min}";
+        result += ", duration='" + this.duration + " min'}";
         return result;
     }
 }

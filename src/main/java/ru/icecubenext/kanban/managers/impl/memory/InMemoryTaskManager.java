@@ -1,4 +1,4 @@
-package ru.icecubenext.kanban.managers.impl;
+package ru.icecubenext.kanban.managers.impl.memory;
 
 import lombok.extern.log4j.Log4j;
 import ru.icecubenext.kanban.managers.HistoryManager;
