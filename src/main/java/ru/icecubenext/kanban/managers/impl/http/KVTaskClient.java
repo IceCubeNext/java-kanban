@@ -14,11 +14,11 @@ public class KVTaskClient {
     private final String API_TOKEN;
     private final String serverUri;
 
-    KVTaskClient(String serverUri) throws IOException, InterruptedException {
+    public KVTaskClient(String serverUri) throws IOException, InterruptedException {
         this.serverUri = serverUri;
         HttpRequest httpRequest = HttpRequest.newBuilder()
-                .GET()
                 .uri(URI.create(serverUri + "/register"))
+                .GET()
                 .build();
         httpClient = HttpClient.newHttpClient();
         HttpResponse<String> response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
@@ -27,12 +27,13 @@ public class KVTaskClient {
 
     public void put(String key, String json) {
         try {
+            log.debug("POST: " + serverUri + "/save/" + key + "?API_TOKEN=" + API_TOKEN);
             HttpRequest httpRequest = HttpRequest.newBuilder()
                     .POST(HttpRequest.BodyPublishers.ofString(json))
                     .uri(URI.create(serverUri + "/save/" + key + "?API_TOKEN=" + API_TOKEN))
                     .build();
             HttpResponse<String> response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-            log.debug("put key=" + key + " value=" + json + "\n Server answer:" +  response.statusCode());
+            log.debug("put key=" + key + " value=" + json + " Server answer:" +  response.statusCode());
         } catch (IOException | InterruptedException e) {
             log.debug("Во время выполнения операции put возникла ошибка");
         }
@@ -40,12 +41,13 @@ public class KVTaskClient {
 
     public String load(String key) {
         try {
+            log.debug("GET: " + serverUri + "/load/" + key + "?API_TOKEN=" + API_TOKEN);
             HttpRequest httpRequest = HttpRequest.newBuilder()
                     .GET()
                     .uri(URI.create(serverUri + "/load/" + key + "?API_TOKEN=" + API_TOKEN))
                     .build();
             HttpResponse<String> response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-            log.debug("load key=" + key + "\n Server answer:" + response.statusCode());
+            log.debug("load key=" + key + " Server answer:" + response.statusCode());
             return response.body();
         } catch (IOException | InterruptedException e) {
             log.debug("Во время выполнения операции put возникла ошибка");

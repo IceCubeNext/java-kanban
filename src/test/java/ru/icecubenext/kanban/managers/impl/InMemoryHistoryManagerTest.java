@@ -8,6 +8,8 @@ import ru.icecubenext.kanban.managers.TaskManager;
 import ru.icecubenext.kanban.model.Epic;
 import ru.icecubenext.kanban.model.Subtask;
 import ru.icecubenext.kanban.model.Task;
+
+import java.io.IOException;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -15,7 +17,7 @@ public class InMemoryHistoryManagerTest {
     TaskManager taskManager;
 
     @BeforeEach
-    public void setUp()  {
+    public void setUp() {
         taskManager = Manager.getDefault();
     }
 
