@@ -18,7 +18,7 @@ import java.util.List;
 public class HttpTaskManager extends FileBackedTaskManager {
     private String serverURL = "http://localhost:8078";
     private final Gson gson = Manager.getGson();
-    private KVTaskClient client = new KVTaskClient(serverURL);
+    private final KVTaskClient client = new KVTaskClient(serverURL);
 
     public HttpTaskManager() throws IOException, InterruptedException {
     }
