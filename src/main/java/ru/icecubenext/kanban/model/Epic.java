@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class Epic extends Task {
-    private final List<Subtask> subtasks = new ArrayList<>();
+    private List<Subtask> subtasks = new ArrayList<>();
 
     public Epic(int id, String name, String description, LocalDateTime startTime, int duration){
         super(id, name, description, startTime, duration);
@@ -31,7 +31,9 @@ public class Epic extends Task {
     public List<Subtask> getSubtasks() {
         return subtasks;
     }
-
+    public void setSubtasks(List<Subtask> subtasks) {
+        this.subtasks = subtasks;
+    }
     @Override
     public int getDuration() {
         return  getEpicsTimeData().getDuration();

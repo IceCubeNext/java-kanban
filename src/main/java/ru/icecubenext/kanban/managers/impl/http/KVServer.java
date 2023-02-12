@@ -32,7 +32,6 @@ public class KVServer {
 
 	private void load(HttpExchange h) throws IOException {
 		try {
-			log.debug("/load");
 			if (!hasAuth(h)) {
 				log.debug("Запрос не авторизован, нужен параметр в query API_TOKEN со значением апи-ключа");
 				h.sendResponseHeaders(403, 0);
@@ -64,7 +63,6 @@ public class KVServer {
 
 	private void save(HttpExchange h) throws IOException {
 		try {
-			log.debug("/save");
 			if (!hasAuth(h)) {
 				log.debug("Запрос не авторизован, нужен параметр в query API_TOKEN со значением апи-ключа");
 				h.sendResponseHeaders(403, 0);
@@ -83,9 +81,13 @@ public class KVServer {
 					h.sendResponseHeaders(400, 0);
 					return;
 				}
-				data.put(key, value);
-				log.debug("Значение для ключа " + key + " успешно обновлено!");
-				h.sendResponseHeaders(200, 0);
+				if (data.containsKey(key) && data.get(key).equals(value)) {
+					h.sendResponseHeaders(304, -1);
+				} else {
+					data.put(key, value);
+					log.debug("Значение для ключа " + key + " успешно обновлено!");
+					h.sendResponseHeaders(200, 0);
+				}
 			} else {
 				log.debug("/save ждёт POST-запрос, а получил: " + h.getRequestMethod());
 				h.sendResponseHeaders(405, 0);
@@ -97,7 +99,7 @@ public class KVServer {
 
 	private void register(HttpExchange h) throws IOException {
 		try {
-			log.debug("/register");
+			log.debug("Регистрирую клиента. Клиенту присвоен API_TOKEN: " + apiToken);
 			if ("GET".equals(h.getRequestMethod())) {
 				sendText(h, apiToken);
 			} else {
@@ -110,9 +112,7 @@ public class KVServer {
 	}
 
 	public void start() {
-		log.debug("Запускаем сервер на порту " + PORT);
-		log.debug("Открой в браузере http://localhost:" + PORT + "/");
-		log.debug("API_TOKEN: " + apiToken);
+		log.debug("Запускаем сервер: http://localhost:" + PORT + "/");
 		server.start();
 	}
 

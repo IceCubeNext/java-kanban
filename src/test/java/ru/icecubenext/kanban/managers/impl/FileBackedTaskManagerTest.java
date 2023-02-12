@@ -108,7 +108,7 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskMan
         LocalDateTime startTime2 = LocalDateTime.of(2010, Month.JUNE, 10, 8, 30);
         Task task1 = new Task("Задача 1", "Описание з. 1");
         Task task2 = new Task(0, "Задача 2", "Описание з. 2", null, 0);
-        Task task3 = new Task(0, "Задача 2", "Описание з. 2", startTime1, 30);
+        Task task3 = new Task(0, "Задача 3", "Описание з. 3", startTime1, 30);
         int task1Id = taskManager.addTask(task1);
         int task2Id = taskManager.addTask(task2);
         int task3Id = taskManager.addTask(task3);

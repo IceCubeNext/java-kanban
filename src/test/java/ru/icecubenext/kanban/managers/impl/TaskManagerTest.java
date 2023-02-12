@@ -1,6 +1,5 @@
 package ru.icecubenext.kanban.managers.impl;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import ru.icecubenext.kanban.managers.TaskManager;
 import ru.icecubenext.kanban.model.Epic;
@@ -22,12 +21,6 @@ public abstract class TaskManagerTest <T extends TaskManager> {
     }
     public T getTaskManager() {
         return this.taskManager;
-    }
-
-    @AfterEach
-    public void clearData() {
-        taskManager.deleteTasks();
-        taskManager.deleteEpics();
     }
 
     @Test

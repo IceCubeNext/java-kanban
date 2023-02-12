@@ -33,7 +33,7 @@ public class KVTaskClient {
                     .uri(URI.create(serverUri + "/save/" + key + "?API_TOKEN=" + API_TOKEN))
                     .build();
             HttpResponse<String> response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-            log.debug("put key=" + key + " value=" + json + " Server answer:" +  response.statusCode());
+            log.debug("Сохранение по ключу key=" + key + " value=" + json + " Server answer:" +  response.statusCode());
         } catch (IOException | InterruptedException e) {
             log.debug("Во время выполнения операции put возникла ошибка");
         }
@@ -47,7 +47,7 @@ public class KVTaskClient {
                     .uri(URI.create(serverUri + "/load/" + key + "?API_TOKEN=" + API_TOKEN))
                     .build();
             HttpResponse<String> response = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
-            log.debug("load key=" + key + " Server answer:" + response.statusCode());
+            log.debug("Загрузка по ключу key=" + key + " Server answer:" + response.statusCode());
             return response.body();
         } catch (IOException | InterruptedException e) {
             log.debug("Во время выполнения операции put возникла ошибка");

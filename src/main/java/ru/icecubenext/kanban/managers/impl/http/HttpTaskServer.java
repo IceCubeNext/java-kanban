@@ -32,10 +32,6 @@ public class HttpTaskServer {
         this.httpServer.createContext("/tasks", this::handler);
     }
 
-    public HttpTaskServer(TaskManager taskManager) throws IOException {
-        this.taskManager = taskManager;
-    }
-
     public static void main(String[] args) throws IOException {
         final HttpTaskServer httpTaskServer = new HttpTaskServer();
         httpTaskServer.start();
