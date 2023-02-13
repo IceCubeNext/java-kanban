@@ -15,10 +15,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
-import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.regex.Pattern;
 
 @Log4j
 public class HttpTaskServer {
@@ -65,8 +63,7 @@ public class HttpTaskServer {
     private void getHandler(HttpExchange exchange) throws IOException {
         final String query = exchange.getRequestURI().getQuery();
         String response;
-        Endpoint endpoint = getEndpoint(exchange);
-        switch (endpoint) {
+        switch(Endpoint.getEndpoint(exchange)) {
             case GET_TASK:
                 Task task = taskManager.getTask(Integer.parseInt(query.substring(3)));
                 if (task == null) {
@@ -140,14 +137,13 @@ public class HttpTaskServer {
     }
 
     private void postHandler(HttpExchange exchange) throws IOException {
-        Endpoint endpoint = getEndpoint(exchange);
         String json = readHttpBody(exchange);
         if (json.isEmpty()) {
             log.debug("POST: Body is empty.");
             writeResponse(exchange, "Body is empty", HttpURLConnection.HTTP_BAD_REQUEST);
             return;
         }
-        switch (endpoint) {
+        switch(Endpoint.getEndpoint(exchange)) {
             case POST_TASK:
                 final Task task = gson.fromJson(json, Task.class);
                 if (task.getId() == 0) {
@@ -200,15 +196,14 @@ public class HttpTaskServer {
                 }
                 break;
             default:
-                log.debug("Неизвестный эндпоинт: " + endpoint);
+                log.debug("Неизвестный эндпоинт: " + Endpoint.getEndpoint(exchange));
         }
     }
 
     private void deleteHandler(HttpExchange exchange) throws IOException {
         final String query = exchange.getRequestURI().getQuery();
-        Endpoint endpoint = getEndpoint(exchange);
         int id;
-        switch (endpoint) {
+        switch (Endpoint.getEndpoint(exchange)) {
             case DELETE_TASK:
                 id = Integer.parseInt(query.substring(3));
                 if (taskManager.deleteTask(id)) {
@@ -265,74 +260,6 @@ public class HttpTaskServer {
             return new String(inputStream.readAllBytes(), DEFAULT_CHARSET);
         }
     }
-
-    private Endpoint getEndpoint(HttpExchange exchange) {
-        Pattern pattern = Pattern.compile("id=[\\d]+");
-        URI uri = exchange.getRequestURI();
-        String requestMethod = exchange.getRequestMethod();
-        String query = uri.getQuery();
-        String[] pathParts = uri.getPath().split("/");
-        if (pathParts.length < 2 || !pathParts[1].equals("tasks") || pathParts.length > 3) {
-            return Endpoint.UNKNOWN;
-        }
-        switch (requestMethod) {
-            case "GET":
-                if (pathParts.length == 2) return Endpoint.GET_PRIORITIZED_TASKS;
-                switch (pathParts[2]) {
-                    case "task":
-                        if (query==null) return Endpoint.GET_TASKS;
-                        if (pattern.matcher(query).matches()) return Endpoint.GET_TASK;
-                        break;
-                    case "epic":
-                        if (query==null) return Endpoint.GET_EPICS;
-                        if (pattern.matcher(query).matches()) return Endpoint.GET_EPIC;
-                        break;
-                    case "subtask":
-                        if (query==null) return Endpoint.GET_SUBTASKS;
-                        if (pattern.matcher(query).matches()) return Endpoint.GET_SUBTASK;
-                    case "history":
-                        if (query==null) return Endpoint.GET_HISTORY;
-                    default:
-                        return Endpoint.UNKNOWN;
-                }
-                break;
-            case "POST":
-                switch (pathParts[2]) {
-                    case "task":
-                        if (pattern.matcher(query).matches()) return Endpoint.POST_TASK;
-                        break;
-                    case "epic":
-                        if (pattern.matcher(query).matches()) return Endpoint.POST_EPIC;
-                        break;
-                    case "subtask":
-                        if (pattern.matcher(query).matches()) return Endpoint.POST_SUBTASK;
-                    default:
-                        return Endpoint.UNKNOWN;
-                }
-                break;
-            case "DELETE":
-                switch (pathParts[2]) {
-                    case "task":
-                        if (query==null) return Endpoint.DELETE_TASKS;
-                        if (pattern.matcher(query).matches()) return Endpoint.DELETE_TASK;
-                        break;
-                    case "epic":
-                        if (query==null) return Endpoint.DELETE_EPICS;
-                        if (pattern.matcher(query).matches())  return Endpoint.DELETE_EPIC;
-                        break;
-                    case "subtask":
-                        if (query==null) return Endpoint.DELETE_SUBTASKS;
-                        if (pattern.matcher(query).matches()) return Endpoint.DELETE_SUBTASK;
-                    default:
-                        return Endpoint.UNKNOWN;
-                }
-                break;
-            default:
-                return Endpoint.UNKNOWN;
-        }
-        return Endpoint.UNKNOWN;
-    }
-
 
     private void writeResponse(HttpExchange exchange, String responseString, int responseCode) throws IOException {
         if(responseString.isBlank()) {
