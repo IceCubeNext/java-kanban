@@ -6,6 +6,7 @@ import lombok.extern.log4j.Log4j;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,26 +35,26 @@ public class KVServer {
 		try {
 			if (!hasAuth(h)) {
 				log.debug("Запрос не авторизован, нужен параметр в query API_TOKEN со значением апи-ключа");
-				h.sendResponseHeaders(403, 0);
+				h.sendResponseHeaders(HttpURLConnection.HTTP_FORBIDDEN, 0);
 				return;
 			}
 			if ("GET".equals(h.getRequestMethod())) {
 				String key = h.getRequestURI().getPath().substring("/load/".length());
 				if (key.isEmpty()) {
 					log.debug("Key для запроса пустой. Key указывается в пути: /load/{key}");
-					h.sendResponseHeaders(400, 0);
+					h.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, 0);
 					return;
 				}
 				if (data.containsKey(key)) {
 					String responseString = data.get(key);
 					byte[] bytes = responseString.getBytes(DEFAULT_CHARSET);
-					h.sendResponseHeaders(200, bytes.length);
+					h.sendResponseHeaders(HttpURLConnection.HTTP_OK, bytes.length);
 					try (OutputStream os = h.getResponseBody()) {
 						os.write(bytes);
 					}
 				} else {
 					log.debug("Данные по запрашиваемому ключу отсутствуют. key=" + key);
-					h.sendResponseHeaders(404, 0);
+					h.sendResponseHeaders(HttpURLConnection.HTTP_NOT_FOUND, 0);
 				}
 			}
 		} finally {
@@ -65,32 +66,32 @@ public class KVServer {
 		try {
 			if (!hasAuth(h)) {
 				log.debug("Запрос не авторизован, нужен параметр в query API_TOKEN со значением апи-ключа");
-				h.sendResponseHeaders(403, 0);
+				h.sendResponseHeaders(HttpURLConnection.HTTP_FORBIDDEN, 0);
 				return;
 			}
 			if ("POST".equals(h.getRequestMethod())) {
 				String key = h.getRequestURI().getPath().substring("/save/".length());
 				if (key.isEmpty()) {
 					log.debug("Key для сохранения пустой. key указывается в пути: /save/{key}");
-					h.sendResponseHeaders(400, 0);
+					h.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, 0);
 					return;
 				}
 				String value = readText(h);
 				if (value.isEmpty()) {
 					log.debug("Value для сохранения пустой. value указывается в теле запроса");
-					h.sendResponseHeaders(400, 0);
+					h.sendResponseHeaders(HttpURLConnection.HTTP_BAD_REQUEST, 0);
 					return;
 				}
 				if (data.containsKey(key) && data.get(key).equals(value)) {
-					h.sendResponseHeaders(304, -1);
+					h.sendResponseHeaders(HttpURLConnection.HTTP_NOT_MODIFIED, -1);
 				} else {
 					data.put(key, value);
 					log.debug("Значение для ключа " + key + " успешно обновлено!");
-					h.sendResponseHeaders(200, 0);
+					h.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
 				}
 			} else {
 				log.debug("/save ждёт POST-запрос, а получил: " + h.getRequestMethod());
-				h.sendResponseHeaders(405, 0);
+				h.sendResponseHeaders(HttpURLConnection.HTTP_BAD_METHOD, 0);
 			}
 		} finally {
 			h.close();
@@ -104,7 +105,7 @@ public class KVServer {
 				sendText(h, apiToken);
 			} else {
 				log.debug("/register ждёт GET-запрос, а получил " + h.getRequestMethod());
-				h.sendResponseHeaders(405, 0);
+				h.sendResponseHeaders(HttpURLConnection.HTTP_BAD_METHOD, 0);
 			}
 		} finally {
 			h.close();
@@ -137,7 +138,7 @@ public class KVServer {
 	protected void sendText(HttpExchange h, String text) throws IOException {
 		byte[] resp = text.getBytes(UTF_8);
 		h.getResponseHeaders().add("Content-Type", "application/json");
-		h.sendResponseHeaders(200, resp.length);
+		h.sendResponseHeaders(HttpURLConnection.HTTP_OK, resp.length);
 		h.getResponseBody().write(resp);
 	}
 }
